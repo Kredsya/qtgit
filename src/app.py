@@ -22,15 +22,15 @@ class AboutDialog(QDialog):#상단바의 help의 about클릭 시 Made by Antonin
         self.layout.addWidget(self.buttonBox)
         self.setLayout(self.layout)
 
-class App(QMainWindow):
+class App(QMainWindow):#main application window를 위한 클래스
 
-    def __init__(self, initialDir):
+    def __init__(self, initialDir): 
         super().__init__()
         
         # Variables
-        self.currentDir = initialDir
+        self.currentDir = initialDir #pathlib모듈의 Path객체를 받음. main함수에서 App객체를 생성할 때에는 home디렉토리(사용자 폴더)를 인자로 넘겨줌
         self.history = {}
-        self.mainExplorer = None
+        self.mainExplorer = None #QListView 클래스 객체를 받는 필드. 파일 목록을 리스트로 보여주기 위함
         # App init
         self.initUI()
     def initUI(self):
