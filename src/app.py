@@ -33,68 +33,66 @@ class App(QMainWindow):  # main application window를 위한 클래스
 
         # App init
         self.initUI()
-    def initUI(self):
+    def initUI(self): # UI를 초기화하는 함수
         # Status bar
-        self.statusBar()
+        self.statusBar() # 상태바를 생성하는 함수
         
         # Dir model
-        dirModel = QFileSystemModel()
-        dirModel.setFilter(QDir.Dirs | QDir.NoDotAndDotDot)
-        dirModel.setRootPath(QDir.rootPath())
+        dirModel = QFileSystemModel() # QFileSystemModel : 파일 시스템의 디렉토리 구조를 표현하는 모델
+        dirModel.setFilter(QDir.Dirs | QDir.NoDotAndDotDot) # QDir.Dirs : 디렉토리만 표시하도록 필터링 # QDir.NoDotAndDotDot : "."과 ".."을 표시하지 않도록 필터링 # setFilter : 모델의 필터를 설정하는 함수
+        dirModel.setRootPath(QDir.rootPath()) # QDir.rootPath() : 루트 디렉토리의 경로를 반환하는 함수 # setRootPath : 모델의 루트 경로를 설정하는 함수
 
         # Side explorer
-        self.sideExplorer = QTreeView()
-        self.sideExplorer.setModel(dirModel)
-        self.sideExplorer.hideColumn(3)
-        self.sideExplorer.hideColumn(2)
-        self.sideExplorer.hideColumn(1)
-        self.sideExplorer.header().hide()
-        self.sideExplorer.clicked.connect(self.navigate)
-        self.sideExplorer.setFrameStyle(QFrame.NoFrame)
-        self.sideExplorer.uniformRowHeights = True
+        self.sideExplorer = QTreeView() # QTreeView : QAbstractItemView를 상속받은 클래스. 트리 형태로 데이터를 표시하는 위젯
+        self.sideExplorer.setModel(dirModel) # QTreeView의 모델을 dirModel로 설정
+        self.sideExplorer.hideColumn(3) #QTreeView의 3번째 열을 숨김
+        self.sideExplorer.hideColumn(2) #QTreeView의 2번째 열을 숨김
+        self.sideExplorer.hideColumn(1) #QTreeView의 1번째 열을 숨김
+        self.sideExplorer.header().hide() #QTreeView의 헤더를 숨김
+        self.sideExplorer.clicked.connect(self.navigate) #QTreeView의 아이템을 클릭했을 때 navigate함수를 호출
+        self.sideExplorer.setFrameStyle(QFrame.NoFrame) #QTreeView의 테두리를 없앰
+        self.sideExplorer.uniformRowHeights = True #QTreeView의 행의 높이를 일정하게 설정
 
-        self.mainModel = QFileSystemModel()
-        self.mainModel.setRootPath(QDir.rootPath())
-        self.mainModel.setReadOnly(False)
-        self.mainModel.directoryLoaded.connect(self.updateStatus)
+        self.mainModel = QFileSystemModel() #QFileSystemModel : 파일 시스템의 디렉토리 구조를 표현하는 모델
+        self.mainModel.setRootPath(QDir.rootPath()) #QDir.rootPath() : 루트 디렉토리의 경로를 반환하는 함수
+        self.mainModel.setReadOnly(False) #QFileSystemModel의 읽기 전용 속성을 False로 설정
+        self.mainModel.directoryLoaded.connect(self.updateStatus) #QFileSystemModel의 디렉토리가 로드될 때 updateStatus함수를 호출
         # Main explorer
-        self.changeView("Details")
+        self.changeView("Details") #changeView함수를 호출하여 QListView를 생성
         
         # Set layout and views
-        layout = QVBoxLayout()
-        layout.setContentsMargins(0, 0, 0, 0)
+        layout = QVBoxLayout() #QVBoxLayout : 위젯을 수직으로 배치하는 레이아웃 클래스
+        layout.setContentsMargins(0, 0, 0, 0) #QVBoxLayout의 여백을 없앰
         
-        explorerLayout = QHBoxLayout()
-        explorerLayout.setContentsMargins(0, 0, 0, 0)
+        explorerLayout = QHBoxLayout() #QHBoxLayout : 위젯을 수평으로 배치하는 레이아웃 클래스
+        explorerLayout.setContentsMargins(0, 0, 0, 0) #QHBoxLayout의 여백을 없앰
 
-        layout.addLayout(explorerLayout)
+        layout.addLayout(explorerLayout) #QVBoxLayout에 QHBoxLayout을 추가
 
-        self.explorerSplitter = QSplitter(Qt.Horizontal)
-        self.explorerSplitter.addWidget(self.sideExplorer)
-        self.explorerSplitter.addWidget(self.mainExplorer)
+        self.explorerSplitter = QSplitter(Qt.Horizontal) #QSplitter : 위젯을 분할하여 배치하는 클래스
+        self.explorerSplitter.addWidget(self.sideExplorer) #QSplitter에 QTreeView를 추가
+        self.explorerSplitter.addWidget(self.mainExplorer) #QSplitter에 QListView를 추가
 
-        self.explorerSplitter.setStretchFactor(1, 2)
-        self.explorerSplitter.setSizes([400, 800])
-        explorerLayout.addWidget(self.explorerSplitter)
+        self.explorerSplitter.setStretchFactor(1, 2) #QSplitter의 1번째 위젯의 크기를 2배로 설정
+        self.explorerSplitter.setSizes([400, 800]) #QSplitter의 크기를 설정
+        explorerLayout.addWidget(self.explorerSplitter) #QHBoxLayout에 QSplitter를 추가
 
         # Top menus
-        self.createTopMenu()
-        self.createActionBar()
+        self.createTopMenu() #createTopMenu함수를 호출하여 상단바를 생성
+        self.createActionBar() #createActionBar함수를 호출하여 상단바의 action바를 생성
 
 
         # Main widget
-        widget = QWidget()
-        widget.setLayout(layout)
-        self.setCentralWidget(widget)
+        widget = QWidget() #QWidget : 위젯을 생성하는 클래스
+        widget.setLayout(layout)  #QVBoxLayout을 위젯의 레이아웃으로 설정
+        self.setCentralWidget(widget) #QMainWindow의 중앙 위젯을 설정
 
 
-        # self.setContextMenuPolicy(Qt.CustomContextMenu)
-        # self.customContextMenuRequested.connect(self.contextItemMenu) 
-        self.setWindowIcon(QIcon('./src/ico/application-sidebar.png'))
-        self.setLayout(layout)
-        self.setGeometry(800,600,600,560)
-        self.navigate(self.mainModel.setRootPath(QDir.homePath()))
-        self.show()
+        self.setWindowIcon(QIcon('./src/ico/application-sidebar.png')) #QMainWindow의 아이콘을 설정
+        self.setLayout(layout) #QMainWindow의 레이아웃을 설정
+        self.setGeometry(800,600,600,560) #QMainWindow의 위치와 크기를 설정
+        self.navigate(self.mainModel.setRootPath(QDir.homePath())) #QMainWindow의 디렉토리를 homePath로 설정
+        self.show() #QMainWindow를 보여줌
     def about(self, event):#상단바의 help의 about클릭 시
         dlg = AboutDialog(self)
         if dlg.exec():#exec() : QDialog의 메소드. QDialog의 창을 띄우는 메소드
