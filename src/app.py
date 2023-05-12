@@ -219,21 +219,21 @@ class App(QMainWindow):  # main application window를 위한 클래스
             status += " | " + str(selectedCount) + " elements selected"
         
         self.statusBar().showMessage(status)
-    def onKeyPress(self, key):
-        if key.key() == Qt.Key_Delete:
-            self.deleteFiles(None)
-    def onDoubleClick(self, event):
-        itemPath = self.mainModel.fileInfo(event)
+    def onKeyPress(self, key): #키보드 이벤트 처리
+        if key.key() == Qt.Key_Delete: #Delete키를 눌렀을 때
+            self.deleteFiles(None) #deleteFiles함수 호출
+    def onDoubleClick(self, event): #더블클릭 이벤트 처리
+        itemPath = self.mainModel.fileInfo(event) #더블클릭한 파일의 경로를 가져옴
 
-        if isdir(itemPath):
-            self.navigate(event)
-        elif isfile(itemPath):
+        if isdir(itemPath): #더블클릭한 파일이 폴더일 경우
+            self.navigate(event) #navigate함수 호출 #폴더를 열어줌
+        elif isfile(itemPath): #더블클릭한 파일이 파일일 경우
             if platform.system() == 'Darwin':       # macOS
-                subprocess.call(('open', itemPath))
+                subprocess.call(('open', itemPath)) #open 명령어를 이용하여 파일을 열어줌
             elif platform.system() == 'Windows':    # Windows
-                os.startfile(itemPath)
+                os.startfile(itemPath) #startfile 명령어를 이용하여 파일을 열어줌
             else:                                   # linux variants
-                subprocess.call(('xdg-open', itemPath))
+                subprocess.call(('xdg-open', itemPath)) #xdg-open 명령어를 이용하여 파일을 열어줌
     def contextItemMenu(self, position):
         index = self.mainExplorer.indexAt(position)
         if (index.isValid()):
