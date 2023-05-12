@@ -101,33 +101,32 @@ class App(QMainWindow):  # main application window를 위한 클래스
             print("Success!")
         else: # Cancel 출력 -창의 x버튼을 누르면
             print("Cancel!")
-    def createActionBar(self):
+    def createActionBar(self):#상단바의 action바를 위한 메소드 - 상위 디렉토리로 가거나 현제 디렉토리를 표시하거나 검색하는 기능
         
         self.toolbar = self.addToolBar("actionToolBar")
-        self.toolbar.setMovable(False)
-        self.toolbar.setFloatable(False)
+        self.toolbar.setMovable(False) #상단의 action바를 움직일 수 없게 설정
+        self.toolbar.setFloatable(False) #상단의 action바를 떠다니지 않게 설정
 
-        self._navigateBackButton = QToolButton()                                     
+        self._navigateBackButton = QToolButton() #이전 디렉토리로 가는 버튼이나 이것과 connect된 메소드가 없어서 작동 X
         self._navigateBackButton.setIcon(QIcon("./src/ico/arrow-180.png"))
         self._navigateBackButton.setToolButtonStyle(Qt.ToolButtonIconOnly)
-        # self._navigateBackButton.clicked.connect(self.showDetail)
 
-        self._navigateForwardButton = QToolButton()                                     
+        self._navigateForwardButton = QToolButton() #다음 디렉토리로 가는 버튼이나 이것과 connect된 메소드가 없어서 작동 X
         self._navigateForwardButton.setIcon(QIcon("./src/ico/arrow.png"))
         self._navigateForwardButton.setToolButtonStyle(Qt.ToolButtonIconOnly)
 
-        self._navigateUpButton = QToolButton()                              
+        self._navigateUpButton = QToolButton() #상위 디렉토리로 가는 버튼
         self._navigateUpButton.setIcon(QIcon("./src/ico/arrow-090.png"))
         self._navigateUpButton.setToolButtonStyle(Qt.ToolButtonIconOnly)
-        self._navigateUpButton.clicked.connect(self.navigateUp)
+        self._navigateUpButton.clicked.connect(self.navigateUp) #클릭 시 navigateUp메소드 실행
 
-        splitter = QSplitter(Qt.Horizontal)
+        splitter = QSplitter(Qt.Horizontal) #상단바의 action바에 들어갈 위젯들을 위한 splitter
 
-        self.addressBar = QLineEdit()
+        self.addressBar = QLineEdit() #현재 디렉토리를 표시하는 위젯
         self.addressBar.setMaxLength(255)
         splitter.addWidget(self.addressBar)
 
-        self.searchField = QLineEdit()
+        self.searchField = QLineEdit()#검색을 위한 위젯 - 작동 x
         self.searchField.setPlaceholderText("Search")
         splitter.addWidget(self.searchField)
 
@@ -135,7 +134,7 @@ class App(QMainWindow):  # main application window를 위한 클래스
         splitter.setSizes([500, 200])
 
 
-        self.toolbar.addWidget(self._navigateBackButton)
+        self.toolbar.addWidget(self._navigateBackButton) #상단바의 action바에 위젯들을 추가
         self.toolbar.addWidget(self._navigateForwardButton)
         self.toolbar.addWidget(self._navigateUpButton)
         self.toolbar.addWidget(splitter)
