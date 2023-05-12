@@ -142,15 +142,15 @@ class App(QMainWindow):  # main application window를 위한 클래스
         self.mainExplorer.selectAll()
     def unselectAll(self):#상단바의 Edit의 unselectAll 클릭시, QListView클래스의 selectionModel함수 이용.
         self.mainExplorer.selectionModel().clearSelection()
-    def navigate(self, index):
-        self.currentDir = self.mainModel.fileInfo(index).absoluteFilePath()
-        self.mainExplorer.setRootIndex(self.mainModel.setRootPath(self.currentDir))
-        self.setWindowTitle(os.path.basename(self.currentDir))
-        self.addressBar.setText(self.currentDir)
-    def navigateUp(self, event):
-        self.currentDir = os.path.dirname(self.currentDir)
-        self.navigate(self.mainModel.setRootPath(self.currentDir))
-    def navigateFromSideTree(self, selected, unselected):
+    def navigate(self, index): #QListView클래스의 setRootIndex함수 이용.
+        self.currentDir = self.mainModel.fileInfo(index).absoluteFilePath() #현재 디렉토리를 설정
+        self.mainExplorer.setRootIndex(self.mainModel.setRootPath(self.currentDir)) #QListView의 디렉토리를 설정
+        self.setWindowTitle(os.path.basename(self.currentDir)) #QMainWindow의 타이틀을 현재 디렉토리로 설정
+        self.addressBar.setText(self.currentDir) #현재 디렉토리를 표시하는 위젯에 현재 디렉토리를 설정
+    def navigateUp(self, event): #상위 디렉토리로 가는 메소드
+        self.currentDir = os.path.dirname(self.currentDir) #현재 디렉토리의 상위 디렉토리를 설정
+        self.navigate(self.mainModel.setRootPath(self.currentDir)) #QListView의 디렉토리를 설정
+    def navigateFromSideTree(self, selected, unselected): #QTreeView의 디렉토리
         print(selected)
     def deleteFiles(self, event):
         reply = QMessageBox.question(self, 'Delete', 'Are you sure you sure you want to delete those elements ?',
