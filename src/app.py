@@ -211,13 +211,13 @@ class App(QMainWindow):  # main application window를 위한 클래스
             self.mainExplorer.setRootIndex(self.mainModel.setRootPath(self.currentDir)) #QListView, QTableView의 루트 경로를 설정
 
 
-    def updateStatus(self, path):
-        status = str(self.mainModel.rowCount(self.mainModel.index(path))) + " elements"
-        selectedCount = len(self.mainExplorer.selectionModel().selectedIndexes())
-        if selectedCount > 0:      
-            status += " | " + str(selectedCount) + " elements selected"
+    def updateStatus(self, path): #하단바의 상태를 업데이트하는 메소드
+        status = str(self.mainModel.rowCount(self.mainModel.index(path))) + " elements" #현재 폴더의 파일 개수를 가져옴 #QListView, QTableView의 파일 개수를 가져옴
+        selectedCount = len(self.mainExplorer.selectionModel().selectedIndexes()) #선택된 파일 개수를 가져옴 #QListView, QTableView의 선택된 파일 개수를 가져옴
+        if selectedCount > 0:     #선택된 파일이 있으면
+            status += " | " + str(selectedCount) + " elements selected" #선택된 파일 개수를 상태에 추가
         
-        self.statusBar().showMessage(status)
+        self.statusBar().showMessage(status) #하단바의 상태를 업데이트 #상태바에 상태를 출력
     def onKeyPress(self, key): #키보드 이벤트 처리
         if key.key() == Qt.Key_Delete: #Delete키를 눌렀을 때
             self.deleteFiles(None) #deleteFiles함수 호출
