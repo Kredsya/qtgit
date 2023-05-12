@@ -264,11 +264,11 @@ class App(QMainWindow):  # main application window를 위한 클래스
             pasteAction.triggered.connect(self.pasteFiles)
 
             action = menu.exec_(QCursor.pos())
-    def cutFiles(self, event):
+    def cutFiles(self, event):#관련 QAction이 trigger되었을때 connect되도록 되어있지 않아 무쓸모
         self.selectedFiles = self.mainExplorer.selectionModel().selectedIndexes()
-    def copyFiles(self, event):
+    def copyFiles(self, event):#관련 QAction이 trigger되었을때 connect되도록 되어있지 않아 무쓸모
         self.selectedFiles = self.mainExplorer.selectionModel().selectedIndexes()
-    def pasteFiles(self, event):
+    def pasteFiles(self, event):#관련 QAction이 trigger되었을때 connect되도록 되어있지 않아 무쓸모
         for file in self.selectedFiles:
             fileName = self.mainModel.itemData(file)[0]
             filePath = join(self.currentDir, fileName)
@@ -281,7 +281,7 @@ class App(QMainWindow):  # main application window를 위한 클래스
                     pass
             else:
                 self.mainModel.remove(file)
-    def renameFile(self, event):
+    def renameFile(self, event):#선택된 파일을 mainExplorer.selectionModel().selectedIndexes()로 받아와서 이름을 바꿔줌
         selectedIndexes = self.mainExplorer.selectionModel().selectedIndexes();
         for file in selectedIndexes:
             fileName = self.mainModel.itemData(file)[0]
