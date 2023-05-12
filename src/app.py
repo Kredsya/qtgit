@@ -141,9 +141,9 @@ class App(QMainWindow):  # main application window를 위한 클래스
         self.toolbar.addWidget(splitter)
         self.toolbar.setStyleSheet("QToolBar { border: 0px }")
 
-    def selectAll(self, event):
+    def selectAll(self, event):#상단바의 Edit의 selectAll 클릭시, QListView클래스의 selectAll함수 이용.
         self.mainExplorer.selectAll()
-    def unselectAll(self):
+    def unselectAll(self):#상단바의 Edit의 unselectAll 클릭시, QListView클래스의 selectionModel함수 이용.
         self.mainExplorer.selectionModel().clearSelection()
     def navigate(self, index):
         self.currentDir = self.mainModel.fileInfo(index).absoluteFilePath()
