@@ -8,7 +8,9 @@ from PyQt5.QtGui import QIcon, QCursor
 from PyQt5.QtCore import Qt,QDir, QVariant, QSize, QModelIndex
 import sys
 
-class AboutDialog(QDialog):
+
+class AboutDialog(QDialog):  # 상단바의 help의 about클릭 시 Made by Antonin Desfontaines.를 출력하는 창을 띄우기 위한 클래스
+    # QDialog를 상속받아 만들어진 클래스 // QDialog : 짧은 기간의 일을 처리할 때 사용되는 창(ex.경고창, 메시지 팝업창)을 띄우기 위한 PyQt5의 클래스
     def __init__(self, parent=None):
         super().__init__(parent)
 
@@ -21,15 +23,16 @@ class AboutDialog(QDialog):
         self.layout.addWidget(self.buttonBox)
         self.setLayout(self.layout)
 
-class App(QMainWindow):
+
+class App(QMainWindow):  # main application window를 위한 클래스
 
     def __init__(self, initialDir):
         super().__init__()
-        
+
         # Variables
-        self.currentDir = initialDir
+        self.currentDir = initialDir  # pathlib모듈의 Path객체를 받음. main함수에서 App객체를 생성할 때에는 home디렉토리(사용자 폴더)를 인자로 넘겨줌
         self.history = {}
-        self.mainExplorer = None
+        self.mainExplorer = None  # QListView 클래스 객체를 받는 필드. 파일 목록을 리스트로 보여주기 위함
         # App init
         self.initUI()
     def initUI(self):
@@ -287,76 +290,80 @@ class App(QMainWindow):
             filePath = join(self.currentDir, fileName)
             if os.path.exists(filePath):
                 self.mainExplorer.edit(file)
+
     def createTopMenu(self):
         # Add menus
-        menuBar = self.menuBar()
+        menuBar = self.menuBar()  # 상단 메뉴바
 
-        fileMenu = menuBar.addMenu('&File')
+        fileMenu = menuBar.addMenu('&File')  # 메뉴바에 File Edit View Go Help 추가
         editMenu = menuBar.addMenu("&Edit")
         viewMenu = menuBar.addMenu("&View")
         goMenu = menuBar.addMenu("&Go")
         helpMenu = menuBar.addMenu("&Help")
 
         # File
-        newAction = QAction('&New', self)        
-        # newAction.setShortcut('Ctrl+N')
-        newAction.setStatusTip('New')
+        # New Exit는 해당 QAction이 trigger되었을때 connect되는 것이 없어서 해당 매뉴를 클릭해도 동작하지 않는 것으로 보임
+        newAction = QAction('&New', self)
+        newAction.setStatusTip('New')  # 상단 메뉴바의 File을 클릭하면 New매뉴가 보이도록
 
-        exitAction = QAction('&Exit', self)        
-        exitAction.setStatusTip('Exit')
+        exitAction = QAction('&Exit', self)
+        exitAction.setStatusTip('Exit')  # 상단 메뉴바의 File을 클릭하면 Exit매뉴가 보이도록
 
-        fileMenu.addAction(newAction)
+        fileMenu.addAction(newAction)  # editMenu에 Qaction들 추가
         fileMenu.addSeparator()
         fileMenu.addAction(exitAction)
- 
+
         # Edit
-        cutAction = QAction('&Cut', self)        
-        # cutAction.setShortcut('Ctrl+X')
-        cutAction.setStatusTip('Cut')
+        # cut copy paste는 해당 QAction이 trigger되었을때 connect되는 것이 없어서 해당 매뉴를 클릭해도 동작하지 않는 것으로 보임
+        cutAction = QAction('&Cut', self)
+        cutAction.setStatusTip('Cut')  # 상단 메뉴바의 Edit를 클릭하면 Cut매뉴가 보이도록
 
-        copyAction = QAction('&Copy', self)        
-        copyAction.setStatusTip('Copy')
+        copyAction = QAction('&Copy', self)
+        copyAction.setStatusTip('Copy')  # 상단 메뉴바의 Edit를 클릭하면 Copy매뉴가 보이도록
 
-        pasteAction = QAction('&Paste', self)        
-        pasteAction.setStatusTip('Paste')
+        pasteAction = QAction('&Paste', self)
+        pasteAction.setStatusTip('Paste')  # 상단 메뉴바의 Edit를 클릭하면 Paste매뉴가 보이도록
 
         selectAllAction = QAction('&Select All', self)
-        selectAllAction.setStatusTip('Select All')
-        selectAllAction.triggered.connect(self.selectAll)
+        selectAllAction.setStatusTip('Select All')  # 상단 메뉴바의 Edit를 클릭하면 Select All매뉴가 보이도록
+        selectAllAction.triggered.connect(self.selectAll)  # selectAllAction이 trigger될 경우 self.selectAll실행
 
         unselectAllAction = QAction('&Unselect All', self)
-        unselectAllAction.setStatusTip('Unselect All')
-        unselectAllAction.triggered.connect(self.unselectAll)
+        unselectAllAction.setStatusTip('Unselect All')  # 상단 메뉴바의 Edit를 클릭하면 Unselect All매뉴가 보이도록
+        unselectAllAction.triggered.connect(self.unselectAll)  # unselectAllAction이 trigger될 경우 self.unselectAll실행
 
-        editMenu.addAction(cutAction)
+        editMenu.addAction(cutAction)  # editMenu에 Qaction들 추가
         editMenu.addAction(copyAction)
         editMenu.addAction(pasteAction)
         editMenu.addSeparator()
         editMenu.addAction(selectAllAction)
         editMenu.addAction(unselectAllAction)
-        
-        # View
-        iconsViewAction = QAction('&Icons', self)        
-        iconsViewAction.setStatusTip('Icons')
-        iconsViewAction.triggered.connect(lambda checked: self.changeView("Icons"))
 
-        listViewAction = QAction('&List', self)        
-        listViewAction.setStatusTip('List')
-        listViewAction.triggered.connect(lambda checked: self.changeView("List"))
+        # View
+        iconsViewAction = QAction('&Icons', self)
+        iconsViewAction.setStatusTip('Icons')  # 상단 메뉴바의 View를 클릭하면 Icons매뉴가 보이도록
+        iconsViewAction.triggered.connect(
+            lambda checked: self.changeView("Icons"))  # iconsViewAction이 triggger될경우  self.changeView("Icons")실행
+
+        listViewAction = QAction('&List', self)
+        listViewAction.setStatusTip('List')  # 상단 메뉴바의 View를 클릭하면 List매뉴가 보이도록
+        listViewAction.triggered.connect(
+            lambda checked: self.changeView("List"))  # listViewAction이 triggger될경우  self.changeView("List")실행
 
         detailViewAction = QAction('&Details', self)
-        detailViewAction.setStatusTip('Details')
-        detailViewAction.triggered.connect(lambda checked: self.changeView("Details"))
+        detailViewAction.setStatusTip('Details')  # 상단 메뉴바의 View를 클릭하면 Details매뉴가 보이도록
+        detailViewAction.triggered.connect(
+            lambda checked: self.changeView("Details"))  # detailViewAction이 triggger될경우  self.changeView("Details")실행
 
-        viewMenu.addAction(iconsViewAction)
+        viewMenu.addAction(iconsViewAction)  # viewMenu에 Qaction들 추가
         viewMenu.addAction(listViewAction)
         viewMenu.addAction(detailViewAction)
         # About
         aboutAction = QAction('&About', self)
         aboutAction.setStatusTip('About')
-        aboutAction.triggered.connect(self.about)
+        aboutAction.triggered.connect(self.about)  # aboutAction이 triggger될경우  self.about실행//안내메시지 창 띄움
 
-        helpMenu.addAction(aboutAction)
+        helpMenu.addAction(aboutAction)  # helpMenu(menuBar.addMenu("&Help"))에 Qaction추가
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     ex = App(Path.home())
