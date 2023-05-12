@@ -359,7 +359,7 @@ class App(QMainWindow):  # main application window를 위한 클래스
         aboutAction.triggered.connect(self.about)  # aboutAction이 triggger될경우  self.about실행//안내메시지 창 띄움
 
         helpMenu.addAction(aboutAction)  # helpMenu(menuBar.addMenu("&Help"))에 Qaction추가
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    ex = App(Path.home())
-    sys.exit(app.exec_()) 
+if __name__ == '__main__': #프로그램 실행시 실행되는 부분
+    app = QApplication(sys.argv) #QApplication생성
+    ex = App(Path.home()) #App생성 #Path.home()은 사용자의 홈디렉토리를 의미 - 홈디렉토리는 윈도우 11 기준 사용자 폴더 #ex는 App객체
+    sys.exit(app.exec_()) #프로그램 종료시까지 실행 #app.exec_()는 이벤트 루프를 실행시키는 함수 #sys.exit()는 프로그램 종료
