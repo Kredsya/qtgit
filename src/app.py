@@ -8,7 +8,6 @@ from PyQt5.QtGui import QIcon, QCursor
 from PyQt5.QtCore import Qt,QDir, QVariant, QSize, QModelIndex
 import sys
 
-
 class AboutDialog(QDialog):  # 상단바의 help의 about클릭 시 Made by Antonin Desfontaines.를 출력하는 창을 띄우기 위한 클래스
     # QDialog를 상속받아 만들어진 클래스 // QDialog : 짧은 기간의 일을 처리할 때 사용되는 창(ex.경고창, 메시지 팝업창)을 띄우기 위한 PyQt5의 클래스
     def __init__(self, parent=None):
@@ -23,16 +22,15 @@ class AboutDialog(QDialog):  # 상단바의 help의 about클릭 시 Made by Anto
         self.layout.addWidget(self.buttonBox)
         self.setLayout(self.layout)
 
-
 class App(QMainWindow):  # main application window를 위한 클래스
-
-    def __init__(self, initialDir):
+    def __init__(self, initialDir): 
         super().__init__()
 
         # Variables
         self.currentDir = initialDir  # pathlib모듈의 Path객체를 받음. main함수에서 App객체를 생성할 때에는 home디렉토리(사용자 폴더)를 인자로 넘겨줌
         self.history = {}
         self.mainExplorer = None  # QListView 클래스 객체를 받는 필드. 파일 목록을 리스트로 보여주기 위함
+
         # App init
         self.initUI()
     def initUI(self):
