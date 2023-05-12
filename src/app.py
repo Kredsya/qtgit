@@ -234,33 +234,31 @@ class App(QMainWindow):  # main application window를 위한 클래스
                 os.startfile(itemPath) #startfile 명령어를 이용하여 파일을 열어줌
             else:                                   # linux variants
                 subprocess.call(('xdg-open', itemPath)) #xdg-open 명령어를 이용하여 파일을 열어줌
-    def contextItemMenu(self, position):
-        index = self.mainExplorer.indexAt(position)
-        if (index.isValid()):
-            menu = QMenu()
-            cutAction = menu.addAction("Cut")
-            cutAction.triggered.connect(self.cutFiles)
+    def contextItemMenu(self, position): #컨텍스트 메뉴 이벤트 처리
+        index = self.mainExplorer.indexAt(position) #커서가 위치한 곳의 인덱스를 가져옴
+        if (index.isValid()): #인덱스가 유효하다면
+            menu = QMenu() #메뉴 생성
+            cutAction = menu.addAction("Cut") #메뉴에 Cut 액션 추가
+            cutAction.triggered.connect(self.cutFiles) #액션에 cutFiles함수를 연결
 
-            deleteAction = menu.addAction("Delete")
-            deleteAction.triggered.connect(self.deleteFiles)
+            deleteAction = menu.addAction("Delete") #메뉴에 Delete 액션 추가
+            deleteAction.triggered.connect(self.deleteFiles) #액션에 deleteFiles함수를 연결
             
-            renameAction = menu.addAction("Rename")
-            renameAction.triggered.connect(self.renameFile)
+            renameAction = menu.addAction("Rename") #메뉴에 Rename 액션 추가
+            renameAction.triggered.connect(self.renameFile) #액션에 renameFile함수를 연결
 
-            copyAction = menu.addAction("Copy")
-            copyAction.triggered.connect(self.copyFiles)
-            menu.addSeparator()
-            # menu.addSeparator()
-            # menu.addAction("Properties")
-            action = menu.exec_(QCursor.pos())
-        else:
-            menu = QMenu()
-            menu.addAction("Refresh")
-            menu.addSeparator()
-            pasteAction = menu.addAction("Paste")
-            pasteAction.triggered.connect(self.pasteFiles)
+            copyAction = menu.addAction("Copy") #메뉴에 Copy 액션 추가
+            copyAction.triggered.connect(self.copyFiles) #액션에 copyFiles함수를 연결
+            menu.addSeparator() #메뉴에 구분선 추가
+            action = menu.exec_(QCursor.pos()) #메뉴를 실행
+        else: #인덱스가 유효하지 않다면
+            menu = QMenu() #메뉴 생성
+            menu.addAction("Refresh") #메뉴에 Refresh 액션 추가
+            menu.addSeparator() #메뉴에 구분선 추가
+            pasteAction = menu.addAction("Paste") #메뉴에 Paste 액션 추가
+            pasteAction.triggered.connect(self.pasteFiles) #액션에 pasteFiles함수를 연결
 
-            action = menu.exec_(QCursor.pos())
+            action = menu.exec_(QCursor.pos()) #메뉴를 실행
     def cutFiles(self, event):#관련 QAction이 trigger되었을때 connect되도록 되어있지 않아 무쓸모
         self.selectedFiles = self.mainExplorer.selectionModel().selectedIndexes()
     def copyFiles(self, event):#관련 QAction이 trigger되었을때 connect되도록 되어있지 않아 무쓸모
