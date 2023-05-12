@@ -207,7 +207,7 @@ class App(QMainWindow):  # main application window를 위한 클래스
         self.mainExplorer.setModel(self.mainModel) #QListView, QTableView의 모델을 설정
 
         if hasattr(self, "explorerSplitter"): #explorerSplitter가 존재하면
-             self.explorerSplitter.replaceWidget(1, self.mainExplorer) #explorerSplitter의 1번째 위젯을 QListView, QTableView로 변경
+            self.explorerSplitter.replaceWidget(1, self.mainExplorer) #explorerSplitter의 1번째 위젯을 QListView, QTableView로 변경
             self.mainExplorer.setRootIndex(self.mainModel.setRootPath(self.currentDir)) #QListView, QTableView의 루트 경로를 설정
 
 
