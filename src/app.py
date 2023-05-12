@@ -95,11 +95,11 @@ class App(QMainWindow):  # main application window를 위한 클래스
         self.setGeometry(800,600,600,560)
         self.navigate(self.mainModel.setRootPath(QDir.homePath()))
         self.show()
-    def about(self, event):
+    def about(self, event):#상단바의 help의 about클릭 시
         dlg = AboutDialog(self)
-        if dlg.exec():
+        if dlg.exec():#exec() : QDialog의 메소드. QDialog의 창을 띄우는 메소드
             print("Success!")
-        else:
+        else: # Cancel 출력 -창의 x버튼을 누르면
             print("Cancel!")
     def createActionBar(self):
         
