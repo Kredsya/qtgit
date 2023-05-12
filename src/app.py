@@ -172,44 +172,43 @@ class App(QMainWindow):  # main application window를 위한 클래스
                         pass
                 else: #파일이 존재하지 않으면
                     self.mainModel.remove(file) #QListView에서 파일을 삭제
-    def changeView(self, view):
-        if(view == "List"):
-            if type(self.mainExplorer) is not QListView:
-                self.mainExplorer = QListView()
+    def changeView(self, view): #상단바의 View의 List, Icons, Details를 클릭시, QListView, QTableView의 모드를 변경하는 메소드
+        if(view == "List"): #List를 클릭하면
+            if type(self.mainExplorer) is not QListView: #QListView가 아니면
+                self.mainExplorer = QListView() #QListView로 변경
 
-            self.mainExplorer.setViewMode(QListView.ListMode)
-            self.mainExplorer.setIconSize(QSize(64, 64))
-        elif(view == "Icons"):
-            if type(self.mainExplorer) is not QListView:
-                self.mainExplorer = QListView()
+            self.mainExplorer.setViewMode(QListView.ListMode) #QListView의 모드를 ListMode로 변경
+            self.mainExplorer.setIconSize(QSize(64, 64)) #QListView의 아이콘 크기를 변경
+        elif(view == "Icons"): #Icons를 클릭하면
+            if type(self.mainExplorer) is not QListView: #QListView가 아니면
+                self.mainExplorer = QListView() #QListView로 변경
 
-            self.mainExplorer.setViewMode(QListView.IconMode)
-            self.mainExplorer.setWordWrap(True)
-            self.mainExplorer.setIconSize(QSize(64, 80))
-            # self.mainExplorer.setGridSize(QSize(150, 150));
-            self.mainExplorer.setUniformItemSizes(True)
-        elif(view == "Details"):
-            self.mainExplorer = QTableView()
-            self.mainExplorer.setSelectionBehavior(QAbstractItemView.SelectRows)
-            self.mainExplorer.setSelectionMode(QAbstractItemView.ExtendedSelection)
+            self.mainExplorer.setViewMode(QListView.IconMode) #QListView의 모드를 IconMode로 변경
+            self.mainExplorer.setWordWrap(True) #QListView의 아이콘을 자동으로 줄바꿈
+            self.mainExplorer.setIconSize(QSize(64, 80)) #QListView의 아이콘 크기를 변경
+            self.mainExplorer.setUniformItemSizes(True) #QListView의 아이콘 크기를 균일하게 변경
+        elif(view == "Details"): #Details를 클릭하면
+            self.mainExplorer = QTableView() #QTableView로 변경
+            self.mainExplorer.setSelectionBehavior(QAbstractItemView.SelectRows) #QTableView의 선택 모드를 행 단위로 변경
+            self.mainExplorer.setSelectionMode(QAbstractItemView.ExtendedSelection) #QTableView의 선택 모드를 다중 선택으로 변경
 
-            self.mainExplorer.verticalHeader().hide()
-            self.mainExplorer.setShowGrid(False)
-            self.mainExplorer.horizontalHeader().setSectionsMovable(True)
-            self.mainExplorer.horizontalHeader().setHighlightSections(False)
-            self.mainExplorer.setFrameStyle(QFrame.NoFrame)
-            self.mainExplorer.setSortingEnabled(True)
-            self.mainExplorer.setEditTriggers(QAbstractItemView.EditKeyPressed)
+            self.mainExplorer.verticalHeader().hide() #QTableView의 세로 헤더를 숨김
+            self.mainExplorer.setShowGrid(False) #QTableView의 그리드를 숨김
+            self.mainExplorer.horizontalHeader().setSectionsMovable(True) #QTableView의 헤더를 이동 가능하게 변경
+            self.mainExplorer.horizontalHeader().setHighlightSections(False) #QTableView의 헤더를 선택시 하이라이트를 표시하지 않게 변경
+            self.mainExplorer.setFrameStyle(QFrame.NoFrame) #QTableView의 테두리를 숨김
+            self.mainExplorer.setSortingEnabled(True) #QTableView의 정렬을 활성화
+            self.mainExplorer.setEditTriggers(QAbstractItemView.EditKeyPressed) #QTableView의 편집을 키보드로 활성화
 
         # Common
-        self.mainExplorer.doubleClicked.connect(self.onDoubleClick)
-        self.mainExplorer.setContextMenuPolicy(Qt.CustomContextMenu)
-        self.mainExplorer.customContextMenuRequested.connect(self.contextItemMenu)
-        self.mainExplorer.setModel(self.mainModel)
+        self.mainExplorer.doubleClicked.connect(self.onDoubleClick) #QListView, QTableView의 더블 클릭 이벤트를 처리하는 함수를 연결
+        self.mainExplorer.setContextMenuPolicy(Qt.CustomContextMenu) #QListView, QTableView의 컨텍스트 메뉴를 커스텀으로 변경
+        self.mainExplorer.customContextMenuRequested.connect(self.contextItemMenu) #QListView, QTableView의 컨텍스트 메뉴 이벤트를 처리하는 함수를 연결
+        self.mainExplorer.setModel(self.mainModel) #QListView, QTableView의 모델을 설정
 
-        if hasattr(self, "explorerSplitter"):
-            self.explorerSplitter.replaceWidget(1, self.mainExplorer)
-            self.mainExplorer.setRootIndex(self.mainModel.setRootPath(self.currentDir))
+        if hasattr(self, "explorerSplitter"): #explorerSplitter가 존재하면
+             self.explorerSplitter.replaceWidget(1, self.mainExplorer) #explorerSplitter의 1번째 위젯을 QListView, QTableView로 변경
+            self.mainExplorer.setRootIndex(self.mainModel.setRootPath(self.currentDir)) #QListView, QTableView의 루트 경로를 설정
 
 
     def updateStatus(self, path):
