@@ -99,6 +99,10 @@ class App(QMainWindow):  # main application window를 위한 클래스
             print("Success!")
         else: # Cancel 출력 -창의 x버튼을 누르면
             print("Cancel!")
+
+
+
+
     def createActionBar(self):#상단바의 action바를 위한 메소드 - 상위 디렉토리로 가거나 현제 디렉토리를 표시하거나 검색하는 기능
         
         self.toolbar = self.addToolBar("actionToolBar")
@@ -361,6 +365,8 @@ class App(QMainWindow):  # main application window를 위한 클래스
         gitInitAction = QAction('&GitInit', self)
         gitInitAction.setStatusTip('GitInit')  # 상단 메뉴바의 Git을 클릭하면 Repository Create매뉴가 보이도록
         gitInitAction.triggered.connect(self.GitInit)  # gitInitAction이 triggger될경우  self.GitInit
+
+        gitMenu.addAction(gitInitAction)  # gitMenu(menuBar.addMenu("&Git"))에 Qaction추가
 
         # About
         aboutAction = QAction('&About', self)
