@@ -427,6 +427,10 @@ class App(QMainWindow):  # main application window를 위한 클래스
         #gitCommitAction.triggered.connect(self.GitCommit)
 
         gitMenu.addAction(gitInitAction)  # gitMenu(menuBar.addMenu("&Git"))에 Qaction추가
+        gitMenu.addAction(gitAddAction)
+        gitMenu.addAction(gitRestoreAction)
+        gitMenu.addAction(gitRmAction)
+        gitMenu.addAction(gitCommitAction)
         # About
         aboutAction = QAction('&About', self)
         aboutAction.setStatusTip('About')
