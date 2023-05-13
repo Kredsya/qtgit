@@ -80,6 +80,7 @@ class App(QMainWindow):  # main application window를 위한 클래스
         self.sideExplorer.uniformRowHeights = True #QTreeView의 행의 높이를 일정하게 설정
 
         self.mainModel = FileSystemModelWithGitStatus() #QFileSystemModel : 파일 시스템의 디렉토리 구조를 표현하는 모델
+        self.mainModel.setFilter(QDir.NoDotAndDotDot | QDir.AllDirs | QDir.Files | QDir.Hidden)
         self.mainModel.setRootPath(QDir.rootPath()) #QDir.rootPath() : 루트 디렉토리의 경로를 반환하는 함수
         self.mainModel.setReadOnly(False) #QFileSystemModel의 읽기 전용 속성을 False로 설정
         self.mainModel.directoryLoaded.connect(self.updateStatus) #QFileSystemModel의 디렉토리가 로드될 때 updateStatus함수를 호출
@@ -143,7 +144,6 @@ class App(QMainWindow):  # main application window를 위한 클래스
             #.git은 숨김 파일이므로 숨김 파일을 보이게 하는 명령어 실행
             os.system("attrib -h -s " + path + "/.git")
             #숨김처리가 해제된 .git이 gui에서 보이도록 처리
-            self.mainModel.setFilter(QDir.NoDotAndDotDot | QDir.AllEntries | QDir.Hidden) #QFileSystemModel의 필터를 설정하는 함수
             self.mainModel.setRootPath(path) #QFileSystemModel의 루트 디렉토리를 설정하는 함수
             self.mainExplorer.setRootIndex(self.mainModel.index(path)) #QListView의 루트 인덱스를 설정하는 함수
 
