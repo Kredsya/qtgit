@@ -387,17 +387,17 @@ class App(QMainWindow):  # main application window를 위한 클래스
 
         # View
         iconsViewAction = QAction('&Icons', self)
-        iconsViewAction.setStatusTip('Icons')  # 상단 메뉴바의 View를 클릭하면 Icons매뉴가 보이도록
+        iconsViewAction.setStatusTip('Change view as Icon only')  # 상단 메뉴바의 View를 클릭하면 Icons매뉴가 보이도록
         iconsViewAction.triggered.connect(
             lambda checked: self.changeView("Icons"))  # iconsViewAction이 triggger될경우  self.changeView("Icons")실행
 
         listViewAction = QAction('&List', self)
-        listViewAction.setStatusTip('List')  # 상단 메뉴바의 View를 클릭하면 List매뉴가 보이도록
+        listViewAction.setStatusTip('Change view as File name only')  # 상단 메뉴바의 View를 클릭하면 List매뉴가 보이도록
         listViewAction.triggered.connect(
             lambda checked: self.changeView("List"))  # listViewAction이 triggger될경우  self.changeView("List")실행
 
         detailViewAction = QAction('&Details', self)
-        detailViewAction.setStatusTip('Details')  # 상단 메뉴바의 View를 클릭하면 Details매뉴가 보이도록
+        detailViewAction.setStatusTip('Change view as Details (default)')  # 상단 메뉴바의 View를 클릭하면 Details매뉴가 보이도록
         detailViewAction.triggered.connect(
             lambda checked: self.changeView("Details"))  # detailViewAction이 triggger될경우  self.changeView("Details")실행
 
