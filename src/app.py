@@ -288,10 +288,10 @@ class App(QMainWindow):  # main application window를 위한 클래스
         # Add menus
         menuBar = self.menuBar()  # 상단 메뉴바
 
-        fileMenu = menuBar.addMenu('&File')  # 메뉴바에 File Edit View Go Help 추가
+        fileMenu = menuBar.addMenu('&File')  # 메뉴바에 File Edit View Git Help 추가
         editMenu = menuBar.addMenu("&Edit")
         viewMenu = menuBar.addMenu("&View")
-        goMenu = menuBar.addMenu("&Go")
+        gitMenu = menuBar.addMenu("&Git")
         helpMenu = menuBar.addMenu("&Help")
 
         # File
