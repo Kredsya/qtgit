@@ -22,6 +22,32 @@ class AboutDialog(QDialog):  # 상단바의 help의 about클릭 시 Made by Anto
         self.layout.addWidget(self.buttonBox)
         self.setLayout(self.layout)
 
+class FileSystemModelWithGitStatus(QFileSystemModel):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.git_statuses = {}  # A dictionary to store git statuses, where the key is the file path
+
+    def columnCount(self, parent=None):
+        return super().columnCount() + 1  # Increase the column count by 1
+
+    def data(self, index, role):
+        if index.column() == 4 and role == Qt.DisplayRole:
+            # Return the git status if it's the additional column
+            return self.git_statuses.get(self.filePath(index), "")
+        return super().data(index, role)
+
+    def headerData(self, section, orientation, role=Qt.DisplayRole):
+        if section == 4 and role == Qt.DisplayRole:
+            return "Git Status"
+        return super().headerData(section, orientation, role)
+
+    def update_git_status(self, file_path, status):
+        self.git_statuses[file_path] = status
+        # Find the index of the file path
+        index = self.index(file_path)
+        # Emit the dataChanged signal to update the view
+        self.dataChanged.emit(index, index)
+
 class App(QMainWindow):  # main application window를 위한 클래스
     def __init__(self, initialDir): 
         super().__init__()
@@ -53,7 +79,8 @@ class App(QMainWindow):  # main application window를 위한 클래스
         self.sideExplorer.setFrameStyle(QFrame.NoFrame) #QTreeView의 테두리를 없앰
         self.sideExplorer.uniformRowHeights = True #QTreeView의 행의 높이를 일정하게 설정
 
-        self.mainModel = QFileSystemModel() #QFileSystemModel : 파일 시스템의 디렉토리 구조를 표현하는 모델
+        self.mainModel = FileSystemModelWithGitStatus() #QFileSystemModel : 파일 시스템의 디렉토리 구조를 표현하는 모델
+        self.mainModel.setFilter(QDir.NoDotAndDotDot | QDir.AllDirs | QDir.Files | QDir.Hidden)
         self.mainModel.setRootPath(QDir.rootPath()) #QDir.rootPath() : 루트 디렉토리의 경로를 반환하는 함수
         self.mainModel.setReadOnly(False) #QFileSystemModel의 읽기 전용 속성을 False로 설정
         self.mainModel.directoryLoaded.connect(self.updateStatus) #QFileSystemModel의 디렉토리가 로드될 때 updateStatus함수를 호출
@@ -117,7 +144,6 @@ class App(QMainWindow):  # main application window를 위한 클래스
             #.git은 숨김 파일이므로 숨김 파일을 보이게 하는 명령어 실행
             os.system("attrib -h -s " + path + "/.git")
             #숨김처리가 해제된 .git이 gui에서 보이도록 처리
-            self.mainModel.setFilter(QDir.NoDotAndDotDot | QDir.AllEntries | QDir.Hidden) #QFileSystemModel의 필터를 설정하는 함수
             self.mainModel.setRootPath(path) #QFileSystemModel의 루트 디렉토리를 설정하는 함수
             self.mainExplorer.setRootIndex(self.mainModel.index(path)) #QListView의 루트 인덱스를 설정하는 함수
 
@@ -380,9 +406,25 @@ class App(QMainWindow):  # main application window를 위한 클래스
         viewMenu.addAction(detailViewAction)
 
         # Git
-        gitInitAction = QAction('&GitInit', self)
-        gitInitAction.setStatusTip('GitInit')  # 상단 메뉴바의 Git을 클릭하면 Repository Create매뉴가 보이도록
+        gitInitAction = QAction('&Git Init', self) # 상단 메뉴바의 Git을 클릭하면 Repository Create매뉴가 보이도록
+        gitInitAction.setStatusTip('Git Init')
         gitInitAction.triggered.connect(self.GitInit)  # gitInitAction이 triggger될경우  self.GitInit
+
+        gitAddAction = QAction('&Add', self)
+        gitAddAction.setStatusTip('Git add')
+        #gitAddAction.triggered.connect(self.GitAdd)
+
+        gitRestoreAction = QAction('&Restore', self)
+        gitRestoreAction.setStatusTip('Git restore')
+        #gitRestoreAction.triggered.connect(self.GitRestore)
+        
+        gitRmAction = QAction('&Rm', self)
+        gitRmAction.setStatusTip('Git rm')
+        #gitInitAction.triggered.connect(self.GitRm)
+
+        gitCommitAction = QAction('&Commit', self)
+        gitCommitAction.setStatusTip('Git Commit')
+        #gitCommitAction.triggered.connect(self.GitCommit)
 
         gitMenu.addAction(gitInitAction)  # gitMenu(menuBar.addMenu("&Git"))에 Qaction추가
         # About
