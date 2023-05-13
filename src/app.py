@@ -356,6 +356,12 @@ class App(QMainWindow):  # main application window를 위한 클래스
         viewMenu.addAction(iconsViewAction)  # viewMenu에 Qaction들 추가
         viewMenu.addAction(listViewAction)
         viewMenu.addAction(detailViewAction)
+
+        # Git
+        gitInitAction = QAction('&GitInit', self)
+        gitInitAction.setStatusTip('GitInit')  # 상단 메뉴바의 Git을 클릭하면 Repository Create매뉴가 보이도록
+        gitInitAction.triggered.connect(self.GitInit)  # gitInitAction이 triggger될경우  self.GitInit
+
         # About
         aboutAction = QAction('&About', self)
         aboutAction.setStatusTip('About')
