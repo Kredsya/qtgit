@@ -407,23 +407,23 @@ class App(QMainWindow):  # main application window를 위한 클래스
 
         # Git
         gitInitAction = QAction('&Git Init', self) # 상단 메뉴바의 Git을 클릭하면 Repository Create매뉴가 보이도록
-        gitInitAction.setStatusTip('Git Init')
+        gitInitAction.setStatusTip('Execute <git init> command') # 하단 메뉴바에 해당 메뉴에 대한 설명 표시
         gitInitAction.triggered.connect(self.GitInit)  # gitInitAction이 triggger될경우  self.GitInit
 
         gitAddAction = QAction('&Add', self)
-        gitAddAction.setStatusTip('Git add')
+        gitAddAction.setStatusTip('Execute <git add [selected]> command')
         #gitAddAction.triggered.connect(self.GitAdd)
 
         gitRestoreAction = QAction('&Restore', self)
-        gitRestoreAction.setStatusTip('Git restore')
+        gitRestoreAction.setStatusTip('Execute <git restore [selected]> or <git restore --staged [selected]> command')
         #gitRestoreAction.triggered.connect(self.GitRestore)
         
         gitRmAction = QAction('&Rm', self)
-        gitRmAction.setStatusTip('Git rm')
+        gitRmAction.setStatusTip('Execute <git rm --cached [selected]> command')
         #gitInitAction.triggered.connect(self.GitRm)
 
         gitCommitAction = QAction('&Commit', self)
-        gitCommitAction.setStatusTip('Git Commit')
+        gitCommitAction.setStatusTip('Confirm about staged files and Execute <git commit -m [message]> command')
         #gitCommitAction.triggered.connect(self.GitCommit)
 
         gitMenu.addAction(gitInitAction)  # gitMenu(menuBar.addMenu("&Git"))에 Qaction추가
