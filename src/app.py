@@ -406,9 +406,25 @@ class App(QMainWindow):  # main application window를 위한 클래스
         viewMenu.addAction(detailViewAction)
 
         # Git
-        gitInitAction = QAction('&GitInit', self)
-        gitInitAction.setStatusTip('GitInit')  # 상단 메뉴바의 Git을 클릭하면 Repository Create매뉴가 보이도록
+        gitInitAction = QAction('&Git Init', self) # 상단 메뉴바의 Git을 클릭하면 Repository Create매뉴가 보이도록
+        gitInitAction.setStatusTip('Git Init')
         gitInitAction.triggered.connect(self.GitInit)  # gitInitAction이 triggger될경우  self.GitInit
+
+        gitAddAction = QAction('&Add', self)
+        gitAddAction.setStatusTip('Git add')
+        #gitAddAction.triggered.connect(self.GitAdd)
+
+        gitRestoreAction = QAction('&Restore', self)
+        gitRestoreAction.setStatusTip('Git restore')
+        #gitRestoreAction.triggered.connect(self.GitRestore)
+        
+        gitRmAction = QAction('&Rm', self)
+        gitRmAction.setStatusTip('Git rm')
+        #gitInitAction.triggered.connect(self.GitRm)
+
+        gitCommitAction = QAction('&Commit', self)
+        gitCommitAction.setStatusTip('Git Commit')
+        #gitCommitAction.triggered.connect(self.GitCommit)
 
         gitMenu.addAction(gitInitAction)  # gitMenu(menuBar.addMenu("&Git"))에 Qaction추가
         # About
