@@ -100,8 +100,26 @@ class App(QMainWindow):  # main application window를 위한 클래스
         else: # Cancel 출력 -창의 x버튼을 누르면
             print("Cancel!")
 
-
-
+    def GitInit(self):  # 상단바의 Git의 Init을 클릭 시 - git init을 실행하는 메소드(현재 디렉토리에 .git이 없는 디렉토리에서만 git init 실행) - .git이 있을 경우 경고 창
+        # 현재 디렉토리 확인
+        path = self.mainModel.filePath(self.mainExplorer.currentIndex())  # QFileSystemModel의 현재 디렉토리의 경로를 반환하는 함수
+        print(path)
+        # 현재 디렉토리에 .git이 있는지 확인
+        if os.path.isdir(path + "/.git"):  # os.path.isdir() : 디렉토리가 존재하는지 확인하는 함수
+            print("이미 git init이 되어있습니다.")
+            # 이미 git init이 되어있는 경우
+            QMessageBox.warning(self, "Warning", "이미 git init이 되어있습니다.", QMessageBox.Ok)  # QMessageBox : 메시지 박스를 생성하는 클래스
+        else:# 현재 디렉토리에 .git이 없는 경우
+            print("git init 실행")
+            # git init 실행
+            os.system("git init " + path)
+            QMessageBox.information(self, "Information", "git init이 완료되었습니다.", QMessageBox.Ok)
+            #.git은 숨김 파일이므로 숨김 파일을 보이게 하는 명령어 실행
+            os.system("attrib -h -s " + path + "/.git")
+            #숨김처리가 해제된 .git이 gui에서 보이도록 처리
+            self.mainModel.setFilter(QDir.NoDotAndDotDot | QDir.AllEntries | QDir.Hidden) #QFileSystemModel의 필터를 설정하는 함수
+            self.mainModel.setRootPath(path) #QFileSystemModel의 루트 디렉토리를 설정하는 함수
+            self.mainExplorer.setRootIndex(self.mainModel.index(path)) #QListView의 루트 인덱스를 설정하는 함수
 
     def createActionBar(self):#상단바의 action바를 위한 메소드 - 상위 디렉토리로 가거나 현제 디렉토리를 표시하거나 검색하는 기능
         
@@ -367,7 +385,6 @@ class App(QMainWindow):  # main application window를 위한 클래스
         gitInitAction.triggered.connect(self.GitInit)  # gitInitAction이 triggger될경우  self.GitInit
 
         gitMenu.addAction(gitInitAction)  # gitMenu(menuBar.addMenu("&Git"))에 Qaction추가
-
         # About
         aboutAction = QAction('&About', self)
         aboutAction.setStatusTip('About')
