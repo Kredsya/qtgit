@@ -252,12 +252,17 @@ class App(QMainWindow):  # main application window를 위한 클래스
             action = menu.exec_(QCursor.pos()) #메뉴를 실행
         else: #인덱스가 유효하지 않다면
             menu = QMenu() #메뉴 생성
-            menu.addAction("Refresh") #메뉴에 Refresh 액션 추가
+            menu.addAction("Refresh").triggered.connect(self.refresh) #메뉴에 Refresh 액션 추가
             menu.addSeparator() #메뉴에 구분선 추가
             pasteAction = menu.addAction("Paste") #메뉴에 Paste 액션 추가
             pasteAction.triggered.connect(self.pasteFiles) #액션에 pasteFiles함수를 연결
 
             action = menu.exec_(QCursor.pos()) #메뉴를 실행
+    def refresh(self, event):#새로고침 이벤트 처리
+        print("refresh")
+        self.mainModel.setRootPath(self.currentDir)
+        self.mainExplorer.setRootIndex(self.mainModel.setRootPath(self.currentDir))
+
     def cutFiles(self, event):#관련 QAction이 trigger되었을때 connect되도록 되어있지 않아 무쓸모
         self.selectedFiles = self.mainExplorer.selectionModel().selectedIndexes()
     def copyFiles(self, event):#관련 QAction이 trigger되었을때 connect되도록 되어있지 않아 무쓸모
