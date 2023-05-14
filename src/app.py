@@ -527,11 +527,11 @@ class App(QMainWindow):  # main application window를 위한 클래스
 
         gitRmUntrackAction = QAction('&Rm(Untrack file)', self)
         gitRmUntrackAction.setStatusTip('Execute <git rm [selected]> command')
-        gitRmUntrackAction.triggered.connect(self.gitRmUntrack)
+        gitRmUntrackAction.triggered.connect(self.GitRmUntrack)
 
         gitCommitAction = QAction('&Commit', self)
         gitCommitAction.setStatusTip('Confirm about staged files and Execute <git commit -m [message]> command')
-        #gitCommitAction.triggered.connect(self.GitCommit)
+        gitCommitAction.triggered.connect(self.GitCommit)
 
         gitMenu.addAction(gitInitAction)  # gitMenu(menuBar.addMenu("&Git"))에 Qaction추가
         gitMenu.addAction(gitAddAction)
