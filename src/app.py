@@ -132,6 +132,8 @@ class App(QMainWindow):  # main application window를 위한 클래스
     def isTargetOfAdd(self, gitState):
         if gitState == "modified" or gitState == "untracked":
             return True
+        elif gitState == "modified & staged":
+            return True
         else:
             return False
     
@@ -191,6 +193,7 @@ class App(QMainWindow):  # main application window를 위한 클래스
                 if not (isdir(filePath) or isfile(filePath)):
                     continue
                 fileGitState = self.mainModel.git_statuses[filePath]
+                print(f"fileGitState = {fileGitState}")
                 addResult = ""
                 if os.path.exists(filePath) and self.isTargetOfAdd(fileGitState):
                     os.system("git add " + fileName)
