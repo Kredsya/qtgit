@@ -3,7 +3,7 @@ import shutil
 from pathlib import Path
 from os.path import isfile, isdir, join
 import subprocess, os, platform
-from PyQt5.QtWidgets import QApplication, QStyle, QAbstractItemView, QLineEdit, QTableView, QSplitter, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,QToolButton, QMenu, QWidget, QAction,QMessageBox, QDirModel, QFileSystemModel, QTreeView, QListView, QGridLayout, QFrame, QLabel, QDialogButtonBox, QDialog
+from PyQt5.QtWidgets import QApplication, QStyle, QAbstractItemView, QLineEdit, QTableView, QSplitter, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,QToolButton, QMenu, QWidget, QAction,QMessageBox, QDirModel, QFileSystemModel, QTreeView, QListView, QGridLayout, QFrame, QLabel, QDialogButtonBox, QDialog, QInputDialog
 from PyQt5.QtGui import QIcon, QCursor
 from PyQt5.QtCore import Qt,QDir, QVariant, QSize, QModelIndex
 import sys
@@ -146,6 +146,12 @@ class App(QMainWindow):  # main application window를 위한 클래스
             return True
         else:
             return False
+    
+    def isTargetOfCommit(gitState):
+        if gitState == "staged":
+            return True
+        else:
+            return False
 
     def GitInit(self):  # 상단바의 Git의 Init을 클릭 시 - git init을 실행하는 메소드(현재 디렉토리에 .git이 없는 디렉토리에서만 git init 실행) - .git이 있을 경우 경고 창
         # 현재 디렉토리 확인
@@ -240,6 +246,20 @@ class App(QMainWindow):  # main application window를 위한 클래스
                     os.system("git rm --cached " + fileName)
                     rmUntrackResult += fileName + '\n'
             QMessageBox.information(self, "Result", rmUntrackResult, QMessageBox.Ok)
+        else:
+            print("git init을 먼저 하세요.")
+            QMessageBox.warning(self, "Warning", "git init을 먼저 하세요.", QMessageBox.Ok)
+    
+    def GitCommit(self):
+        path = self.mainModel.filePath(self.mainExplorer.currentIndex())  # QFileSystemModel의 현재 디렉토리의 경로를 반환하는 함수
+        path = path.rsplit('/', 1)[0]
+        if os.path.isdir(path + '/.git'):
+            text, ok = QInputDialog.getText(self, 'Commit Message', 'Enter commit message')
+            if ok:
+                os.system('git commit -m "' + text + '"')
+                QMessageBox.information(self, "Result", "Commit is done", QMessageBox.Ok)
+            else:
+                QMessageBox.warning(self, "Warning", "Error : unvalid commit message", QMessageBox.Ok)
         else:
             print("git init을 먼저 하세요.")
             QMessageBox.warning(self, "Warning", "git init을 먼저 하세요.", QMessageBox.Ok)
