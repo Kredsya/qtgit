@@ -260,7 +260,10 @@ class App(QMainWindow):  # main application window를 위한 클래스
                 fileGitState = self.mainModel.git_statuses[filePath]
                 rmUntrackResult = ""
                 if os.path.exists(filePath) and self.isTargetOfUntrack(fileGitState):
-                    os.system("git rm --cached " + fileName)
+                    if fileGitState == "modified & staged":
+                        os.system("git rm --cached -f " + fileName)
+                    else:
+                        os.system("git rm --cached " + fileName)
                     rmUntrackResult += fileName + '\n'
             QMessageBox.information(self, "Result", rmUntrackResult, QMessageBox.Ok)
         else:
