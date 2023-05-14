@@ -123,6 +123,18 @@ class App(QMainWindow):  # main application window를 위한 클래스
         else: # Cancel 출력 -창의 x버튼을 누르면
             print("Cancel!")
 
+    def isTargetOfAdd(gitState):
+        if gitState == "modified" or gitState == "untracked":
+            return True
+        else:
+            return False
+    
+    def isTargetOfRestore(gitState):
+        if gitState == "unmodified" or gitState == "staged":
+            return True
+        else:
+            return False
+
     def GitInit(self):  # 상단바의 Git의 Init을 클릭 시 - git init을 실행하는 메소드(현재 디렉토리에 .git이 없는 디렉토리에서만 git init 실행) - .git이 있을 경우 경고 창
         # 현재 디렉토리 확인
         path = self.mainModel.filePath(self.mainExplorer.currentIndex())  # QFileSystemModel의 현재 디렉토리의 경로를 반환하는 함수
@@ -142,12 +154,6 @@ class App(QMainWindow):  # main application window를 위한 클래스
             #숨김처리가 해제된 .git이 gui에서 보이도록 처리
             self.mainModel.setRootPath(path) #QFileSystemModel의 루트 디렉토리를 설정하는 함수
             self.mainExplorer.setRootIndex(self.mainModel.index(path)) #QListView의 루트 인덱스를 설정하는 함수
-    
-    def isTargetOfAdd(gitState):
-        if gitState == "modified" or gitState == "untracked":
-            return True
-        else:
-            return False
 
     # @todo : prototype, maybe error will occur
     def GitAdd(self):
@@ -162,9 +168,29 @@ class App(QMainWindow):  # main application window를 위한 클래스
                 filePath = join(self.currentDir, fileName)
                 addResult = ""
                 if os.path.exists(filePath) and self.isTargetOfAdd(fileGitState):
-                    addResult += fileName + '\n'
                     os.system("git add " + fileName)
+                    addResult += fileName + '\n'
             QMessageBox.information(self, "Result", addResult, QMessageBox.Ok)
+        else:
+            print("git init을 먼저 하세요.")
+            QMessageBox.warning(self, "Warning", "git init을 먼저 하세요.", QMessageBox.Ok)
+    
+    def GitRestore(self):
+        path = self.mainModel.filePath(self.mainExplorer.currentIndex())  # QFileSystemModel의 현재 디렉토리의 경로를 반환하는 함수
+        path = path.rsplit('/', 1)[0]
+        if os.path.isdir(path + '/.git'):
+            selectedIndexes = self.mainExplorer.selectionModel().selectedIndexes()
+            for file in selectedIndexes:
+                fileName = self.mainModel.itemDate(file)[0]
+                fileGitState = self.mainModel.itemData(file)[4]
+                filePath = join(self.currentDir, fileName)
+                addResult = ""
+                if os.path.exits(filePath) and self.isTargetOfRestore(fileGitState):
+                    if fileGitState == "unmodified":
+                        os.system("git restore " + fileName)
+                    elif fileGitState == "staged":
+                        os.system("git restore --staged " + fileName)
+                    addResult += fileName + '\n'
         else:
             print("git init을 먼저 하세요.")
             QMessageBox.warning(self, "Warning", "git init을 먼저 하세요.", QMessageBox.Ok)
@@ -444,7 +470,7 @@ class App(QMainWindow):  # main application window를 위한 클래스
 
         gitRestoreAction = QAction('&Restore', self)
         gitRestoreAction.setStatusTip('Execute <git restore [selected]> or <git restore --staged [selected]> command')
-        #gitRestoreAction.triggered.connect(self.GitRestore)
+        gitRestoreAction.triggered.connect(self.GitRestore)
         
         gitRmAction = QAction('&Rm', self)
         gitRmAction.setStatusTip('Execute <git rm --cached [selected]> command')
