@@ -330,6 +330,14 @@ class App(QMainWindow):  # main application window를 위한 클래스
     def navigateUp(self, event): #상위 디렉토리로 가는 메소드
         self.currentDir = os.path.dirname(self.currentDir) #현재 디렉토리의 상위 디렉토리를 설정
         self.navigate(self.mainModel.setRootPath(self.currentDir)) #QListView의 디렉토리를 설정
+        path = self.mainModel.setRootPath(self.currentDir)
+        if self.is_gitrepo(self.currentDir):
+            os.chdir(self.currentDir)
+            statuses_str = os.popen("git status").read()
+            git_statuses = parse_git_status(statuses_str)
+            self.git_status_column_update(self.currentDir, git_statuses)
+        self.navigate(path)
+
     def navigateFromSideTree(self, selected, unselected): #QTreeView의 디렉토리
         print(selected)
     def deleteFiles(self, event): #상단바의 Edit의 delete 클릭시, 선택된 파일들을 삭제하는 메소드
