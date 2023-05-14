@@ -15,7 +15,7 @@ A simple GUI based git repository management file explorer written in Python usi
 Clone this repository and install required dependencies.
 
 ```shell
-git clone https://github.com/Kredsya/fileexplorer-git-extension.git
+git clone https://github.com/Kredsya/qtgit.git
 pip3 install pyqt5
 pip3 install pathspec
 ```
