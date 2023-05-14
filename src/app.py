@@ -183,8 +183,10 @@ class App(QMainWindow):  # main application window를 위한 클래스
             selectedIndexes = self.mainExplorer.selectionModel().selectedIndexes()
             for file in selectedIndexes:
                 fileName = self.mainModel.itemData(file)[0]
-                fileGitState = self.mainModel.itemData(file)[4]
                 filePath = join(self.currentDir, fileName)
+                filePath = filePath.replace('\\', '/')
+                print(filePath)
+                fileGitState = self.mainModel.git_statuses[filePath]
                 addResult = ""
                 if os.path.exists(filePath) and self.isTargetOfAdd(fileGitState):
                     os.system("git add " + fileName)
@@ -201,8 +203,9 @@ class App(QMainWindow):  # main application window를 위한 클래스
             selectedIndexes = self.mainExplorer.selectionModel().selectedIndexes()
             for file in selectedIndexes:
                 fileName = self.mainModel.itemData(file)[0]
-                fileGitState = self.mainModel.itemData(file)[4]
                 filePath = join(self.currentDir, fileName)
+                print(filePath)
+                fileGitState = self.mainModel.git_statuses[filePath]
                 restoreResult = ""
                 if os.path.exits(filePath) and self.isTargetOfRestore(fileGitState):
                     if fileGitState == "unmodified":
@@ -222,8 +225,9 @@ class App(QMainWindow):  # main application window를 위한 클래스
             selectedIndexes = self.mainExplorer.selectionModel().selectedIndexes()
             for file in selectedIndexes:
                 fileName = self.mainModel.itemData(file)[0]
-                fileGitState = self.mainModel.itemData(file)[4]
                 filePath = join(self.currentDir, fileName)
+                print(filePath)
+                fileGitState = self.mainModel.git_statuses[filePath]
                 rmDeleteResult = ""
                 if os.path.exits(filePath) and self.isTargetOfRmDelete(fileGitState):
                     os.system("git rm " + fileName)
@@ -240,8 +244,9 @@ class App(QMainWindow):  # main application window를 위한 클래스
             selectedIndexes = self.mainExplorer.selectionModel().selectedIndexes()
             for file in selectedIndexes:
                 fileName = self.mainModel.itemData(file)[0]
-                fileGitState = self.mainModel.itemData(file)[4]
                 filePath = join(self.currentDir, fileName)
+                print(filePath)
+                fileGitState = self.mainModel.git_statuses[filePath]
                 rmUntrackResult = ""
                 if os.path.exits(filePath) and self.isTargetOfUntrack(fileGitState):
                     os.system("git rm --cached " + fileName)
