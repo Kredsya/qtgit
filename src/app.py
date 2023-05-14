@@ -3,12 +3,10 @@ import shutil
 from pathlib import Path
 from os.path import isfile, isdir, join
 import subprocess, os, platform
-from PyQt5.QtWidgets import QApplication, QStyle, QAbstractItemView, QLineEdit, QTableView, QSplitter, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,QToolButton, QMenu, QWidget, QAction,QMessageBox, QDirModel, QFileSystemModel, QTreeView, QListView, QGridLayout, QFrame, QLabel, QDialogButtonBox, QDialog, QInputDialog
+from PyQt5.QtWidgets import QApplication, QAbstractItemView, QLineEdit, QTableView, QSplitter, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,QToolButton, QMenu, QWidget, QAction,QMessageBox, QFileSystemModel, QTreeView, QListView, QFrame, QLabel, QDialogButtonBox, QDialog, QInputDialog
 from PyQt5.QtGui import QIcon, QCursor
-from PyQt5.QtCore import Qt,QDir, QVariant, QSize, QModelIndex
+from PyQt5.QtCore import Qt,QDir, QSize
 import sys
-from git import Repo, GitCommandError
-import pathspec
 class AboutDialog(QDialog):  # 상단바의 help의 about클릭 시 Made by Antonin Desfontaines.를 출력하는 창을 띄우기 위한 클래스
     # QDialog를 상속받아 만들어진 클래스 // QDialog : 짧은 기간의 일을 처리할 때 사용되는 창(ex.경고창, 메시지 팝업창)을 띄우기 위한 PyQt5의 클래스
     def __init__(self, parent=None):
@@ -132,11 +130,13 @@ class App(QMainWindow):  # main application window를 위한 클래스
     def isTargetOfAdd(self, gitState):
         if gitState == "modified" or gitState == "untracked":
             return True
+        elif gitState == "modified & staged":
+            return True
         else:
             return False
     
     def isTargetOfRestore(self, gitState):
-        if gitState == "unmodified" or gitState == "staged":
+        if gitState == "unmodified" or gitState == "staged" or gitState == "untracked" or gitState == "modified & staged":
             return True
         else:
             return False
@@ -179,7 +179,6 @@ class App(QMainWindow):  # main application window를 위한 클래스
             self.mainModel.setRootPath(path) #QFileSystemModel의 루트 디렉토리를 설정하는 함수
             self.mainExplorer.setRootIndex(self.mainModel.index(path)) #QListView의 루트 인덱스를 설정하는 함수
 
-    # @todo : prototype, maybe error will occur
     def GitAdd(self):
         path = self.mainModel.filePath(self.mainExplorer.currentIndex())  # QFileSystemModel의 현재 디렉토리의 경로를 반환하는 함수
         path = path.rsplit('/', 1)[0]
@@ -192,6 +191,7 @@ class App(QMainWindow):  # main application window를 위한 클래스
                 if not (isdir(filePath) or isfile(filePath)):
                     continue
                 fileGitState = self.mainModel.git_statuses[filePath]
+                print(f"fileGitState = {fileGitState}")
                 addResult = ""
                 if os.path.exists(filePath) and self.isTargetOfAdd(fileGitState):
                     os.system("git add " + fileName)
@@ -214,9 +214,9 @@ class App(QMainWindow):  # main application window를 위한 클래스
                 fileGitState = self.mainModel.git_statuses[filePath]
                 restoreResult = ""
                 if os.path.exists(filePath) and self.isTargetOfRestore(fileGitState):
-                    if fileGitState == "unmodified":
+                    if fileGitState == "unmodified" or fileGitState == "modified & staged":
                         os.system("git restore " + fileName)
-                    elif fileGitState == "staged":
+                    elif fileGitState == "staged" or fileGitState == "untracked":
                         os.system("git restore --staged " + fileName)
                     restoreResult += fileName + '\n'
             QMessageBox.information(self, "Result", restoreResult, QMessageBox.Ok)
@@ -224,7 +224,6 @@ class App(QMainWindow):  # main application window를 위한 클래스
             print("git init을 먼저 하세요.")
             QMessageBox.warning(self, "Warning", "git init을 먼저 하세요.", QMessageBox.Ok)
     
-    # need to test
     def GitRmDelete(self):
         path = self.mainModel.filePath(self.mainExplorer.currentIndex())  # QFileSystemModel의 현재 디렉토리의 경로를 반환하는 함수
         path = path.rsplit('/', 1)[0]
@@ -238,14 +237,16 @@ class App(QMainWindow):  # main application window를 위한 클래스
                 fileGitState = self.mainModel.git_statuses[filePath]
                 rmDeleteResult = ""
                 if os.path.exists(filePath) and self.isTargetOfRmDelete(fileGitState):
-                    os.system("git rm " + fileName)
+                    if fileGitState == "modified & staged":
+                        os.system("git rm -f " + fileName)
+                    else:
+                        os.system("git rm " + fileName)
                     rmDeleteResult += fileName + '\n'
             QMessageBox.information(self, "Result", rmDeleteResult, QMessageBox.Ok)
         else:
             print("git init을 먼저 하세요.")
             QMessageBox.warning(self, "Warning", "git init을 먼저 하세요.", QMessageBox.Ok)
 
-    # need to test
     def GitRmUntrack(self):
         path = self.mainModel.filePath(self.mainExplorer.currentIndex())  # QFileSystemModel의 현재 디렉토리의 경로를 반환하는 함수
         path = path.rsplit('/', 1)[0]
@@ -259,14 +260,16 @@ class App(QMainWindow):  # main application window를 위한 클래스
                 fileGitState = self.mainModel.git_statuses[filePath]
                 rmUntrackResult = ""
                 if os.path.exists(filePath) and self.isTargetOfUntrack(fileGitState):
-                    os.system("git rm --cached " + fileName)
+                    if fileGitState == "modified & staged":
+                        os.system("git rm --cached -f " + fileName)
+                    else:
+                        os.system("git rm --cached " + fileName)
                     rmUntrackResult += fileName + '\n'
             QMessageBox.information(self, "Result", rmUntrackResult, QMessageBox.Ok)
         else:
             print("git init을 먼저 하세요.")
             QMessageBox.warning(self, "Warning", "git init을 먼저 하세요.", QMessageBox.Ok)
     
-    # need to test
     def GitCommit(self):
         path = self.mainModel.filePath(self.mainExplorer.currentIndex())  # QFileSystemModel의 현재 디렉토리의 경로를 반환하는 함수
         path = path.rsplit('/', 1)[0]
