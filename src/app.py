@@ -134,6 +134,18 @@ class App(QMainWindow):  # main application window를 위한 클래스
             return True
         else:
             return False
+    
+    def isTargetOfRmDelete(gitState):
+        if gitState != "untracked":
+            return True
+        else:
+            return False
+
+    def isTargetOfUntrack(gitState):
+        if gitState != "untracked":
+            return True
+        else:
+            return False
 
     def GitInit(self):  # 상단바의 Git의 Init을 클릭 시 - git init을 실행하는 메소드(현재 디렉토리에 .git이 없는 디렉토리에서만 git init 실행) - .git이 있을 경우 경고 창
         # 현재 디렉토리 확인
@@ -181,16 +193,53 @@ class App(QMainWindow):  # main application window를 위한 클래스
         if os.path.isdir(path + '/.git'):
             selectedIndexes = self.mainExplorer.selectionModel().selectedIndexes()
             for file in selectedIndexes:
-                fileName = self.mainModel.itemDate(file)[0]
+                fileName = self.mainModel.itemData(file)[0]
                 fileGitState = self.mainModel.itemData(file)[4]
                 filePath = join(self.currentDir, fileName)
-                addResult = ""
+                restoreResult = ""
                 if os.path.exits(filePath) and self.isTargetOfRestore(fileGitState):
                     if fileGitState == "unmodified":
                         os.system("git restore " + fileName)
                     elif fileGitState == "staged":
                         os.system("git restore --staged " + fileName)
-                    addResult += fileName + '\n'
+                    restoreResult += fileName + '\n'
+            QMessageBox.information(self, "Result", restoreResult, QMessageBox.Ok)
+        else:
+            print("git init을 먼저 하세요.")
+            QMessageBox.warning(self, "Warning", "git init을 먼저 하세요.", QMessageBox.Ok)
+    
+    def GitRmDelete(self):
+        path = self.mainModel.filePath(self.mainExplorer.currentIndex())  # QFileSystemModel의 현재 디렉토리의 경로를 반환하는 함수
+        path = path.rsplit('/', 1)[0]
+        if os.path.isdir(path + '/.git'):
+            selectedIndexes = self.mainExplorer.selectionModel().selectedIndexes()
+            for file in selectedIndexes:
+                fileName = self.mainModel.itemData(file)[0]
+                fileGitState = self.mainModel.itemData(file)[4]
+                filePath = join(self.currentDir, fileName)
+                rmDeleteResult = ""
+                if os.path.exits(filePath) and self.isTargetOfRmDelete(fileGitState):
+                    os.system("git rm " + fileName)
+                    rmDeleteResult += fileName + '\n'
+            QMessageBox.information(self, "Result", rmDeleteResult, QMessageBox.Ok)
+        else:
+            print("git init을 먼저 하세요.")
+            QMessageBox.warning(self, "Warning", "git init을 먼저 하세요.", QMessageBox.Ok)
+
+    def GitRmUntrack(self):
+        path = self.mainModel.filePath(self.mainExplorer.currentIndex())  # QFileSystemModel의 현재 디렉토리의 경로를 반환하는 함수
+        path = path.rsplit('/', 1)[0]
+        if os.path.isdir(path + '/.git'):
+            selectedIndexes = self.mainExplorer.selectionModel().selectedIndexes()
+            for file in selectedIndexes:
+                fileName = self.mainModel.itemData(file)[0]
+                fileGitState = self.mainModel.itemData(file)[4]
+                filePath = join(self.currentDir, fileName)
+                rmUntrackResult = ""
+                if os.path.exits(filePath) and self.isTargetOfUntrack(fileGitState):
+                    os.system("git rm --cached " + fileName)
+                    rmUntrackResult += fileName + '\n'
+            QMessageBox.information(self, "Result", rmUntrackResult, QMessageBox.Ok)
         else:
             print("git init을 먼저 하세요.")
             QMessageBox.warning(self, "Warning", "git init을 먼저 하세요.", QMessageBox.Ok)
@@ -472,9 +521,13 @@ class App(QMainWindow):  # main application window를 위한 클래스
         gitRestoreAction.setStatusTip('Execute <git restore [selected]> or <git restore --staged [selected]> command')
         gitRestoreAction.triggered.connect(self.GitRestore)
         
-        gitRmAction = QAction('&Rm', self)
-        gitRmAction.setStatusTip('Execute <git rm --cached [selected]> command')
-        #gitInitAction.triggered.connect(self.GitRm)
+        gitRmDeleteAction = QAction('&Rm(Delete file)', self)
+        gitRmDeleteAction.setStatusTip('Execute <git rm --cached [selected]> command')
+        gitRmDeleteAction.triggered.connect(self.GitRmDelete)
+
+        gitRmUntrackAction = QAction('&Rm(Untrack file)', self)
+        gitRmUntrackAction.setStatusTip('Execute <git rm [selected]> command')
+        gitRmUntrackAction.triggered.connect(self.gitRmUntrack)
 
         gitCommitAction = QAction('&Commit', self)
         gitCommitAction.setStatusTip('Confirm about staged files and Execute <git commit -m [message]> command')
@@ -483,7 +536,8 @@ class App(QMainWindow):  # main application window를 위한 클래스
         gitMenu.addAction(gitInitAction)  # gitMenu(menuBar.addMenu("&Git"))에 Qaction추가
         gitMenu.addAction(gitAddAction)
         gitMenu.addAction(gitRestoreAction)
-        gitMenu.addAction(gitRmAction)
+        gitMenu.addAction(gitRmDeleteAction)
+        gitMenu.addAction(gitRmUntrackAction)
         gitMenu.addAction(gitCommitAction)
         # About
         aboutAction = QAction('&About', self)
