@@ -491,6 +491,34 @@ class App(QMainWindow):  # main application window를 위한 클래스
         aboutAction.triggered.connect(self.about)  # aboutAction이 triggger될경우  self.about실행//안내메시지 창 띄움
 
         helpMenu.addAction(aboutAction)  # helpMenu(menuBar.addMenu("&Help"))에 Qaction추가
+
+def parse_git_status(status):
+    lines = status.split('\n')
+
+    stages = {
+        'Changes to be committed:': [],
+        'Changes not staged for commit:': [],
+        'Untracked files:': [],
+    }
+
+    current_section = None
+    for line in lines:
+        line = line.strip()
+        if line in stages:
+            current_section = line
+        elif line.startswith(('modified:', 'new file:', 'deleted:', 'renamed:')):
+            if current_section:
+                filename = line.split(':   ')[-1]
+                stages[current_section].append(filename)
+        elif current_section == 'Untracked files:' and line and line != '(use "git add <file>..." to include in what will be committed)':
+            stages[current_section].append(line)
+
+    # Rename keys for clarity
+    stages['staged'] = stages.pop('Changes to be committed:')
+    stages['modified'] = stages.pop('Changes not staged for commit:')
+    stages['untracked'] = stages.pop('Untracked files:')
+    return stages
+
 if __name__ == '__main__': #프로그램 실행시 실행되는 부분
     app = QApplication(sys.argv) #QApplication생성
     ex = App(Path.home()) #App생성 #Path.home()은 사용자의 홈디렉토리를 의미 - 홈디렉토리는 윈도우 11 기준 사용자 폴더 #ex는 App객체
