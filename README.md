@@ -22,3 +22,7 @@ pip3 install pyqt5
 ## Documentation
 
 Refer *documentation.md*.
+
+## License
+
+QtGit is released under the CC0-1.0 license.
