@@ -26,9 +26,9 @@ class FileSystemModelWithGitStatus(QFileSystemModel):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.git_statuses = {}  # A dictionary to store git statuses, where the key is the filePath(QModelIndex) of file path
-        def columnCount(self, parent=None):
+    def columnCount(self, parent=None):
             return super().columnCount() + 1  # Increase the column count by 1
-        def data(self, index, role):#QFileSystemModel의data함수를 오버라이딩#QFileSystemModel의4번째 열의 데이터를 git status로 설정
+    def data(self, index, role):#QFileSystemModel의data함수를 오버라이딩#QFileSystemModel의4번째 열의 데이터를 git status로 설정
             if index.column() == 4 and role == Qt.DisplayRole:
                 # If the column is 4 (the git status column) and the role is DisplayRole, return the git status with self.git_statuses[index]
                 if self.filePath(index) in self.git_statuses:
