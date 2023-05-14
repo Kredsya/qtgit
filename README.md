@@ -1,1 +1,1 @@
-# pyqtexplorer
+# QtGit
