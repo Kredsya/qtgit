@@ -184,13 +184,14 @@ class App(QMainWindow):  # main application window를 위한 클래스
                 fileName = self.mainModel.itemDate(file)[0]
                 fileGitState = self.mainModel.itemData(file)[4]
                 filePath = join(self.currentDir, fileName)
-                addResult = ""
+                restoreResult = ""
                 if os.path.exits(filePath) and self.isTargetOfRestore(fileGitState):
                     if fileGitState == "unmodified":
                         os.system("git restore " + fileName)
                     elif fileGitState == "staged":
                         os.system("git restore --staged " + fileName)
-                    addResult += fileName + '\n'
+                    restoreResult += fileName + '\n'
+            QMessageBox.information(self, "Result", restoreResult, QMessageBox.Ok)
         else:
             print("git init을 먼저 하세요.")
             QMessageBox.warning(self, "Warning", "git init을 먼저 하세요.", QMessageBox.Ok)
