@@ -17,8 +17,6 @@ Clone this repository and install required dependencies.
 ```shell
 git clone https://github.com/Kredsya/qtgit.git
 pip3 install pyqt5
-pip3 install pathspec
-pip3 install gitpython
 ```
 
 ## Documentation
