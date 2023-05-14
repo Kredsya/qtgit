@@ -420,7 +420,7 @@ class App(QMainWindow):  # main application window를 위한 클래스
     def git_status_column_update(self, itemPath_str, git_statuses):
         self.mainModel.git_statuses = {}
         # Git Status출력값을 바탕으로 업데이트
-        for untracked_item in git_statuses['untracked']:
+        for untracked_item in git_statuses['untracked']:#untracked_item : 추적되지 않은 파일
             if itemPath_str + "/" + untracked_item in self.mainModel.git_statuses:
                 self.mainModel.update_git_status(itemPath_str + "/" + untracked_item, self.mainModel.git_statuses[itemPath_str + "/" + untracked_item] + " & untracked")
             else:
@@ -430,7 +430,7 @@ class App(QMainWindow):  # main application window를 위한 클래스
                 tmp_item = untracked_item.split('/')[0]
                 self.mainModel.update_git_status(itemPath_str + "/" + tmp_item, "untracked")
 
-        for modified_item in git_statuses['modified']:
+        for modified_item in git_statuses['modified']:#modified_item : 수정된 파일
             if itemPath_str + "/" + modified_item in self.mainModel.git_statuses:
                 self.mainModel.update_git_status(itemPath_str + "/" + modified_item, self.mainModel.git_statuses[itemPath_str + "/" + modified_item] + " & modified")
             else:
@@ -440,7 +440,7 @@ class App(QMainWindow):  # main application window를 위한 클래스
                 tmp_item = modified_item.split('/')[0]
                 self.mainModel.update_git_status(itemPath_str + "/" + tmp_item, "modified")
 
-        for staged_item in git_statuses['staged']:
+        for staged_item in git_statuses['staged']:#staged_item : staged된 파일
             if itemPath_str + "/" + staged_item in self.mainModel.git_statuses:
                 self.mainModel.update_git_status(itemPath_str + "/" + staged_item, self.mainModel.git_statuses[itemPath_str + "/" + staged_item] + " & staged")
             else:
