@@ -142,6 +142,32 @@ class App(QMainWindow):  # main application window를 위한 클래스
             #숨김처리가 해제된 .git이 gui에서 보이도록 처리
             self.mainModel.setRootPath(path) #QFileSystemModel의 루트 디렉토리를 설정하는 함수
             self.mainExplorer.setRootIndex(self.mainModel.index(path)) #QListView의 루트 인덱스를 설정하는 함수
+    
+    def isTargetOfAdd(gitState):
+        if gitState == "modified" or gitState == "untracked":
+            return True
+        else:
+            return False
+
+    # @todo : prototype, maybe error will occur
+    def GitAdd(self):
+        path = self.mainModel.filePath(self.mainExplorer.currentIndex())  # QFileSystemModel의 현재 디렉토리의 경로를 반환하는 함수
+        path = path.rsplit('/', 1)[0]
+        print(path)
+        if os.path.isdir(path + '/.git'):
+            selectedIndexes = self.mainExplorer.selectionModel().selectedIndexes()
+            for file in selectedIndexes:
+                fileName = self.mainModel.itemData(file)[0]
+                fileGitState = self.mainModel.itemData(file)[4]
+                filePath = join(self.currentDir, fileName)
+                addResult = ""
+                if os.path.exists(filePath) and self.isTargetOfAdd(fileGitState):
+                    addResult += fileName + '\n'
+                    os.system("git add " + fileName)
+            QMessageBox.information(self, "Result", addResult, QMessageBox.Ok)
+        else:
+            print("git init을 먼저 하세요.")
+            QMessageBox.warning(self, "Warning", "git init을 먼저 하세요.", QMessageBox.Ok)
 
     def createActionBar(self):#상단바의 action바를 위한 메소드 - 상위 디렉토리로 가거나 현제 디렉토리를 표시하거나 검색하는 기능
         
@@ -389,17 +415,17 @@ class App(QMainWindow):  # main application window를 위한 클래스
 
         # View
         iconsViewAction = QAction('&Icons', self)
-        iconsViewAction.setStatusTip('Icons')  # 상단 메뉴바의 View를 클릭하면 Icons매뉴가 보이도록
+        iconsViewAction.setStatusTip('Change view as Icon only')  # 상단 메뉴바의 View를 클릭하면 Icons매뉴가 보이도록
         iconsViewAction.triggered.connect(
             lambda checked: self.changeView("Icons"))  # iconsViewAction이 triggger될경우  self.changeView("Icons")실행
 
         listViewAction = QAction('&List', self)
-        listViewAction.setStatusTip('List')  # 상단 메뉴바의 View를 클릭하면 List매뉴가 보이도록
+        listViewAction.setStatusTip('Change view as File name only')  # 상단 메뉴바의 View를 클릭하면 List매뉴가 보이도록
         listViewAction.triggered.connect(
             lambda checked: self.changeView("List"))  # listViewAction이 triggger될경우  self.changeView("List")실행
 
         detailViewAction = QAction('&Details', self)
-        detailViewAction.setStatusTip('Details')  # 상단 메뉴바의 View를 클릭하면 Details매뉴가 보이도록
+        detailViewAction.setStatusTip('Change view as Details (default)')  # 상단 메뉴바의 View를 클릭하면 Details매뉴가 보이도록
         detailViewAction.triggered.connect(
             lambda checked: self.changeView("Details"))  # detailViewAction이 triggger될경우  self.changeView("Details")실행
 
@@ -409,26 +435,30 @@ class App(QMainWindow):  # main application window를 위한 클래스
 
         # Git
         gitInitAction = QAction('&Git Init', self) # 상단 메뉴바의 Git을 클릭하면 Repository Create매뉴가 보이도록
-        gitInitAction.setStatusTip('Git Init')
+        gitInitAction.setStatusTip('Execute <git init> command') # 하단 메뉴바에 해당 메뉴에 대한 설명 표시
         gitInitAction.triggered.connect(self.GitInit)  # gitInitAction이 triggger될경우  self.GitInit
 
         gitAddAction = QAction('&Add', self)
-        gitAddAction.setStatusTip('Git add')
-        #gitAddAction.triggered.connect(self.GitAdd)
+        gitAddAction.setStatusTip('Execute <git add [selected]> command')
+        gitAddAction.triggered.connect(self.GitAdd)
 
         gitRestoreAction = QAction('&Restore', self)
-        gitRestoreAction.setStatusTip('Git restore')
+        gitRestoreAction.setStatusTip('Execute <git restore [selected]> or <git restore --staged [selected]> command')
         #gitRestoreAction.triggered.connect(self.GitRestore)
         
         gitRmAction = QAction('&Rm', self)
-        gitRmAction.setStatusTip('Git rm')
+        gitRmAction.setStatusTip('Execute <git rm --cached [selected]> command')
         #gitInitAction.triggered.connect(self.GitRm)
 
         gitCommitAction = QAction('&Commit', self)
-        gitCommitAction.setStatusTip('Git Commit')
+        gitCommitAction.setStatusTip('Confirm about staged files and Execute <git commit -m [message]> command')
         #gitCommitAction.triggered.connect(self.GitCommit)
 
         gitMenu.addAction(gitInitAction)  # gitMenu(menuBar.addMenu("&Git"))에 Qaction추가
+        gitMenu.addAction(gitAddAction)
+        gitMenu.addAction(gitRestoreAction)
+        gitMenu.addAction(gitRmAction)
+        gitMenu.addAction(gitCommitAction)
         # About
         aboutAction = QAction('&About', self)
         aboutAction.setStatusTip('About')
