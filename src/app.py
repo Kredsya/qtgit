@@ -3,12 +3,10 @@ import shutil
 from pathlib import Path
 from os.path import isfile, isdir, join
 import subprocess, os, platform
-from PyQt5.QtWidgets import QApplication, QStyle, QAbstractItemView, QLineEdit, QTableView, QSplitter, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,QToolButton, QMenu, QWidget, QAction,QMessageBox, QDirModel, QFileSystemModel, QTreeView, QListView, QGridLayout, QFrame, QLabel, QDialogButtonBox, QDialog, QInputDialog
+from PyQt5.QtWidgets import QApplication, QAbstractItemView, QLineEdit, QTableView, QSplitter, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,QToolButton, QMenu, QWidget, QAction,QMessageBox, QFileSystemModel, QTreeView, QListView, QFrame, QLabel, QDialogButtonBox, QDialog, QInputDialog
 from PyQt5.QtGui import QIcon, QCursor
-from PyQt5.QtCore import Qt,QDir, QVariant, QSize, QModelIndex
+from PyQt5.QtCore import Qt,QDir, QSize
 import sys
-from git import Repo, GitCommandError
-import pathspec
 class AboutDialog(QDialog):  # 상단바의 help의 about클릭 시 Made by Antonin Desfontaines.를 출력하는 창을 띄우기 위한 클래스
     # QDialog를 상속받아 만들어진 클래스 // QDialog : 짧은 기간의 일을 처리할 때 사용되는 창(ex.경고창, 메시지 팝업창)을 띄우기 위한 PyQt5의 클래스
     def __init__(self, parent=None):
