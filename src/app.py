@@ -127,31 +127,31 @@ class App(QMainWindow):  # main application window를 위한 클래스
         else: # Cancel 출력 -창의 x버튼을 누르면
             print("Cancel!")
 
-    def isTargetOfAdd(gitState):
+    def isTargetOfAdd(self, gitState):
         if gitState == "modified" or gitState == "untracked":
             return True
         else:
             return False
     
-    def isTargetOfRestore(gitState):
+    def isTargetOfRestore(self, gitState):
         if gitState == "unmodified" or gitState == "staged":
             return True
         else:
             return False
     
-    def isTargetOfRmDelete(gitState):
+    def isTargetOfRmDelete(self, gitState):
         if gitState != "untracked":
             return True
         else:
             return False
 
-    def isTargetOfUntrack(gitState):
+    def isTargetOfUntrack(self, gitState):
         if gitState != "untracked":
             return True
         else:
             return False
     
-    def isTargetOfCommit(gitState):
+    def isTargetOfCommit(self, gitState):
         if gitState == "staged":
             return True
         else:
@@ -182,12 +182,17 @@ class App(QMainWindow):  # main application window를 위한 클래스
         path = self.mainModel.filePath(self.mainExplorer.currentIndex())  # QFileSystemModel의 현재 디렉토리의 경로를 반환하는 함수
         path = path.rsplit('/', 1)[0]
         print(path)
-        if os.path.isdir(path + '/.git'):
+        if self.is_gitrepo(path):
             selectedIndexes = self.mainExplorer.selectionModel().selectedIndexes()
             for file in selectedIndexes:
                 fileName = self.mainModel.itemData(file)[0]
-                fileGitState = self.mainModel.itemData(file)[4]
-                filePath = join(self.currentDir, fileName)
+                print(f"fileName = {fileName}")
+                filePath = str(self.currentDir) + '/' + str(fileName)
+                print(f"filepath = {filePath}")
+                if not (isdir(filePath) or isfile(filePath)):
+                    continue
+                fileGitState = self.mainModel.git_statuses[filePath]
+                print(f"fileGitState = {fileGitState}")
                 addResult = ""
                 if os.path.exists(filePath) and self.isTargetOfAdd(fileGitState):
                     os.system("git add " + fileName)
