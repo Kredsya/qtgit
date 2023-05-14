@@ -347,20 +347,16 @@ class App(QMainWindow):  # main application window를 위한 클래스
 
     def git_status_column_update(self, itemPath_str, git_statuses):
         # Git Status를 업데이트
-        for staged_item in git_statuses['staged']:
-            if itemPath_str + "/" + staged_item in self.mainModel.git_statuses:
-                self.mainModel.update_git_status(itemPath_str + "/" + staged_item, self.mainModel.git_statuses[
-                    itemPath_str + "/" + staged_item] + " & staged")
+        for untracked_item in git_statuses['untracked']:
+            if itemPath_str + "/" + untracked_item in self.mainModel.git_statuses:
+                self.mainModel.update_git_status(itemPath_str + "/" + untracked_item, self.mainModel.git_statuses[
+                    itemPath_str + "/" + untracked_item] + " & untracked")
             else:
-                self.mainModel.update_git_status(itemPath_str + "/" + staged_item, "staged")
+                self.mainModel.update_git_status(itemPath_str + "/" + untracked_item, "untracked")
 
-            if '/' in staged_item:
-                tmp_item = staged_item.split('/')[0]
-                if itemPath_str + "/" + tmp_item in self.mainModel.git_statuses:
-                    self.mainModel.update_git_status(itemPath_str + "/" + tmp_item, self.mainModel.git_statuses[
-                        itemPath_str + "/" + tmp_item] + " & staged")
-                else:
-                    self.mainModel.update_git_status(itemPath_str + "/" + tmp_item, "staged")
+            if '/' in untracked_item:
+                tmp_item = untracked_item.split('/')[0]
+                self.mainModel.update_git_status(itemPath_str + "/" + tmp_item, "untracked")
 
         for modified_item in git_statuses['modified']:
             if itemPath_str + "/" + modified_item in self.mainModel.git_statuses:
@@ -371,26 +367,19 @@ class App(QMainWindow):  # main application window를 위한 클래스
 
             if '/' in modified_item:
                 tmp_item = modified_item.split('/')[0]
-                if itemPath_str + "/" + tmp_item in self.mainModel.git_statuses:
-                    self.mainModel.update_git_status(itemPath_str + "/" + tmp_item, self.mainModel.git_statuses[
-                        itemPath_str + "/" + tmp_item] + " & modified")
-                else:
-                    self.mainModel.update_git_status(itemPath_str + "/" + tmp_item, "modified")
+                self.mainModel.update_git_status(itemPath_str + "/" + tmp_item, "modified")
 
-        for untracked_item in git_statuses['untracked']:
-            if itemPath_str + "/" + untracked_item in self.mainModel.git_statuses:
-                self.mainModel.update_git_status(itemPath_str + "/" + untracked_item, self.mainModel.git_statuses[
-                    itemPath_str + "/" + untracked_item] + " & modified")
+        for staged_item in git_statuses['staged']:
+            if itemPath_str + "/" + staged_item in self.mainModel.git_statuses:
+                self.mainModel.update_git_status(itemPath_str + "/" + staged_item, self.mainModel.git_statuses[
+                    itemPath_str + "/" + staged_item] + " & staged")
             else:
-                self.mainModel.update_git_status(itemPath_str + "/" + untracked_item, "modified")
+                self.mainModel.update_git_status(itemPath_str + "/" + staged_item, "staged")
 
-            if '/' in untracked_item:
-                tmp_item = untracked_item.split('/')[0]
-                if itemPath_str + "/" + tmp_item in self.mainModel.git_statuses:
-                    self.mainModel.update_git_status(itemPath_str + "/" + tmp_item, self.mainModel.git_statuses[
-                        itemPath_str + "/" + tmp_item] + " & modified")
-                else:
-                    self.mainModel.update_git_status(itemPath_str + "/" + tmp_item, "modified")
+            if '/' in staged_item:
+                tmp_item = staged_item.split('/')[0]
+                self.mainModel.update_git_status(itemPath_str + "/" + tmp_item, "staged")
+
     def contextItemMenu(self, position): #컨텍스트 메뉴 이벤트 처리
         index = self.mainExplorer.indexAt(position) #커서가 위치한 곳의 인덱스를 가져옴
         if (index.isValid()): #인덱스가 유효하다면
