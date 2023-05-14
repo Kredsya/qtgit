@@ -119,7 +119,9 @@ class App(QMainWindow):  # main application window를 위한 클래스
         self.setLayout(layout) #QMainWindow의 레이아웃을 설정
         self.setGeometry(800,600,600,560) #QMainWindow의 위치와 크기를 설정
         self.navigate(self.mainModel.setRootPath(QDir.homePath())) #QMainWindow의 디렉토리를 homePath로 설정
-        self.show() #QMainWindow를 보여줌
+        self.move(100, 100)
+        self.resize(1200, 800)  # QMainWindow의 크기를 설정
+        self.show()  # QMainWindow를 보여줌
     def about(self, event):#상단바의 help의 about클릭 시
         dlg = AboutDialog(self)
         if dlg.exec():#exec() : QDialog의 메소드. QDialog의 창을 띄우는 메소드
