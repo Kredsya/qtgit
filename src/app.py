@@ -179,7 +179,6 @@ class App(QMainWindow):  # main application window를 위한 클래스
             self.mainModel.setRootPath(path) #QFileSystemModel의 루트 디렉토리를 설정하는 함수
             self.mainExplorer.setRootIndex(self.mainModel.index(path)) #QListView의 루트 인덱스를 설정하는 함수
 
-    # @todo : prototype, maybe error will occur
     def GitAdd(self):
         path = self.mainModel.filePath(self.mainExplorer.currentIndex())  # QFileSystemModel의 현재 디렉토리의 경로를 반환하는 함수
         path = path.rsplit('/', 1)[0]
