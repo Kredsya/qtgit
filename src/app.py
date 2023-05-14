@@ -237,7 +237,10 @@ class App(QMainWindow):  # main application window를 위한 클래스
                 fileGitState = self.mainModel.git_statuses[filePath]
                 rmDeleteResult = ""
                 if os.path.exists(filePath) and self.isTargetOfRmDelete(fileGitState):
-                    os.system("git rm " + fileName)
+                    if fileGitState == "modified & staged":
+                        os.system("git rm -f " + fileName)
+                    else:
+                        os.system("git rm " + fileName)
                     rmDeleteResult += fileName + '\n'
             QMessageBox.information(self, "Result", rmDeleteResult, QMessageBox.Ok)
         else:
