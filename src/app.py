@@ -8,6 +8,7 @@ from PyQt5.QtGui import QIcon, QCursor
 from PyQt5.QtCore import Qt,QDir, QVariant, QSize, QModelIndex
 import sys
 from git import Repo, GitCommandError
+import pathspec
 class AboutDialog(QDialog):  # 상단바의 help의 about클릭 시 Made by Antonin Desfontaines.를 출력하는 창을 띄우기 위한 클래스
     # QDialog를 상속받아 만들어진 클래스 // QDialog : 짧은 기간의 일을 처리할 때 사용되는 창(ex.경고창, 메시지 팝업창)을 띄우기 위한 PyQt5의 클래스
     def __init__(self, parent=None):
@@ -42,7 +43,10 @@ class FileSystemModelWithGitStatus(QFileSystemModel):
         return super().headerData(section, orientation, role)
     def update_git_status(self, file_path, status):#FilesystemModelWithGitStatus의 git_statuses필드에 git status를 저장한 후 모델을 업데이트하는 함수- self.data이용
         self.git_statuses[file_path] = status
-        self.data(self.index(file_path), Qt.DisplayRole)
+        try: #만약 git status명령의 출력값을 파싱하는 과정에서 파일 이름이 아니라 다른 메시지가 포함되었으면 그냥 패스하도록.
+            self.data(self.index(file_path), Qt.DisplayRole)
+        except:
+            pass
 
 class App(QMainWindow):  # main application window를 위한 클래스
     def __init__(self, initialDir): 
@@ -321,6 +325,8 @@ class App(QMainWindow):  # main application window를 위한 클래스
         itemPath = self.mainModel.fileInfo(event) #더블클릭한 파일의 경로를 가져옴
         itemPath_str = str(itemPath.absoluteFilePath())  # QFileInfo 객체로부터 절대 경로를 얻고 문자열로 변환
         if isdir(itemPath): #더블클릭한 파일이 폴더일 경우
+
+
             self.navigate(event) #navigate함수 호출 #폴더를 열어줌
             if os.path.isdir(itemPath_str + "/.git"):  # os.path.isdir() : 디렉토리가 존재하는지 확인하는 함수
                 # Git 저장소를 로드
@@ -331,9 +337,6 @@ class App(QMainWindow):  # main application window를 위한 클래스
 
                 # 'git status'결과를 파싱
                 git_statuses = parse_git_status(status_str)
-
-                print(status_str)
-                print(git_statuses)
 
                 self.git_status_column_update(itemPath_str, git_statuses)
 
@@ -346,11 +349,11 @@ class App(QMainWindow):  # main application window를 위한 클래스
                 subprocess.call(('xdg-open', itemPath)) #xdg-open 명령어를 이용하여 파일을 열어줌
 
     def git_status_column_update(self, itemPath_str, git_statuses):
-        # Git Status를 업데이트
+        self.mainModel.git_statuses = {}
+        # Git Status출력값을 바탕으로 업데이트
         for untracked_item in git_statuses['untracked']:
             if itemPath_str + "/" + untracked_item in self.mainModel.git_statuses:
-                self.mainModel.update_git_status(itemPath_str + "/" + untracked_item, self.mainModel.git_statuses[
-                    itemPath_str + "/" + untracked_item] + " & untracked")
+                self.mainModel.update_git_status(itemPath_str + "/" + untracked_item, self.mainModel.git_statuses[itemPath_str + "/" + untracked_item] + " & untracked")
             else:
                 self.mainModel.update_git_status(itemPath_str + "/" + untracked_item, "untracked")
 
@@ -360,8 +363,7 @@ class App(QMainWindow):  # main application window를 위한 클래스
 
         for modified_item in git_statuses['modified']:
             if itemPath_str + "/" + modified_item in self.mainModel.git_statuses:
-                self.mainModel.update_git_status(itemPath_str + "/" + modified_item, self.mainModel.git_statuses[
-                    itemPath_str + "/" + modified_item] + " & modified")
+                self.mainModel.update_git_status(itemPath_str + "/" + modified_item, self.mainModel.git_statuses[itemPath_str + "/" + modified_item] + " & modified")
             else:
                 self.mainModel.update_git_status(itemPath_str + "/" + modified_item, "modified")
 
@@ -371,14 +373,19 @@ class App(QMainWindow):  # main application window를 위한 클래스
 
         for staged_item in git_statuses['staged']:
             if itemPath_str + "/" + staged_item in self.mainModel.git_statuses:
-                self.mainModel.update_git_status(itemPath_str + "/" + staged_item, self.mainModel.git_statuses[
-                    itemPath_str + "/" + staged_item] + " & staged")
+                self.mainModel.update_git_status(itemPath_str + "/" + staged_item, self.mainModel.git_statuses[itemPath_str + "/" + staged_item] + " & staged")
             else:
                 self.mainModel.update_git_status(itemPath_str + "/" + staged_item, "staged")
 
             if '/' in staged_item:
                 tmp_item = staged_item.split('/')[0]
                 self.mainModel.update_git_status(itemPath_str + "/" + tmp_item, "staged")
+
+        #itemPath_str의 모든 파일, 폴더들을 순회 - untracked처리
+        for item in os.listdir(itemPath_str):
+            if not(itemPath_str + "/" + item in self.mainModel.git_statuses) and item != ".git":
+                self.mainModel.update_git_status(itemPath_str + "/" + item, "untracked")
+
 
     def contextItemMenu(self, position): #컨텍스트 메뉴 이벤트 처리
         index = self.mainExplorer.indexAt(position) #커서가 위치한 곳의 인덱스를 가져옴
