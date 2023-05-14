@@ -18,6 +18,7 @@ Clone this repository and install required dependencies.
 git clone https://github.com/Kredsya/fileexplorer-git-extension.git
 pip3 install pyqt5
 pip3 install pathspec
+pip3 install gitpython
 ```
 
 ## Documentation
