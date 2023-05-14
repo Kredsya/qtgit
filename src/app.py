@@ -127,31 +127,31 @@ class App(QMainWindow):  # main application window를 위한 클래스
         else: # Cancel 출력 -창의 x버튼을 누르면
             print("Cancel!")
 
-    def isTargetOfAdd(gitState):
+    def isTargetOfAdd(self, gitState):
         if gitState == "modified" or gitState == "untracked":
             return True
         else:
             return False
     
-    def isTargetOfRestore(gitState):
+    def isTargetOfRestore(self, gitState):
         if gitState == "unmodified" or gitState == "staged":
             return True
         else:
             return False
     
-    def isTargetOfRmDelete(gitState):
+    def isTargetOfRmDelete(self, gitState):
         if gitState != "untracked":
             return True
         else:
             return False
 
-    def isTargetOfUntrack(gitState):
+    def isTargetOfUntrack(self, gitState):
         if gitState != "untracked":
             return True
         else:
             return False
     
-    def isTargetOfCommit(gitState):
+    def isTargetOfCommit(self, gitState):
         if gitState == "staged":
             return True
         else:
@@ -182,12 +182,14 @@ class App(QMainWindow):  # main application window를 위한 클래스
         path = self.mainModel.filePath(self.mainExplorer.currentIndex())  # QFileSystemModel의 현재 디렉토리의 경로를 반환하는 함수
         path = path.rsplit('/', 1)[0]
         print(path)
-        if os.path.isdir(path + '/.git'):
+        if self.is_gitrepo(path):
             selectedIndexes = self.mainExplorer.selectionModel().selectedIndexes()
             for file in selectedIndexes:
                 fileName = self.mainModel.itemData(file)[0]
-                fileGitState = self.mainModel.itemData(file)[4]
-                filePath = join(self.currentDir, fileName)
+                filePath = str(self.currentDir) + '/' + str(fileName)
+                if not (isdir(filePath) or isfile(filePath)):
+                    continue
+                fileGitState = self.mainModel.git_statuses[filePath]
                 addResult = ""
                 if os.path.exists(filePath) and self.isTargetOfAdd(fileGitState):
                     os.system("git add " + fileName)
@@ -200,14 +202,16 @@ class App(QMainWindow):  # main application window를 위한 클래스
     def GitRestore(self):
         path = self.mainModel.filePath(self.mainExplorer.currentIndex())  # QFileSystemModel의 현재 디렉토리의 경로를 반환하는 함수
         path = path.rsplit('/', 1)[0]
-        if os.path.isdir(path + '/.git'):
+        if self.is_gitrepo(path):
             selectedIndexes = self.mainExplorer.selectionModel().selectedIndexes()
             for file in selectedIndexes:
                 fileName = self.mainModel.itemData(file)[0]
-                fileGitState = self.mainModel.itemData(file)[4]
-                filePath = join(self.currentDir, fileName)
+                filePath = str(self.currentDir) + '/' + str(fileName)
+                if not (isdir(filePath) or isfile(filePath)):
+                    continue
+                fileGitState = self.mainModel.git_statuses[filePath]
                 restoreResult = ""
-                if os.path.exits(filePath) and self.isTargetOfRestore(fileGitState):
+                if os.path.exists(filePath) and self.isTargetOfRestore(fileGitState):
                     if fileGitState == "unmodified":
                         os.system("git restore " + fileName)
                     elif fileGitState == "staged":
@@ -218,17 +222,20 @@ class App(QMainWindow):  # main application window를 위한 클래스
             print("git init을 먼저 하세요.")
             QMessageBox.warning(self, "Warning", "git init을 먼저 하세요.", QMessageBox.Ok)
     
+    # need to test
     def GitRmDelete(self):
         path = self.mainModel.filePath(self.mainExplorer.currentIndex())  # QFileSystemModel의 현재 디렉토리의 경로를 반환하는 함수
         path = path.rsplit('/', 1)[0]
-        if os.path.isdir(path + '/.git'):
+        if self.is_gitrepo(path):
             selectedIndexes = self.mainExplorer.selectionModel().selectedIndexes()
             for file in selectedIndexes:
                 fileName = self.mainModel.itemData(file)[0]
-                fileGitState = self.mainModel.itemData(file)[4]
-                filePath = join(self.currentDir, fileName)
+                filePath = str(self.currentDir) + '/' + str(fileName)
+                if not (isdir(filePath) or isfile(filePath)):
+                    continue
+                fileGitState = self.mainModel.git_statuses[filePath]
                 rmDeleteResult = ""
-                if os.path.exits(filePath) and self.isTargetOfRmDelete(fileGitState):
+                if os.path.exists(filePath) and self.isTargetOfRmDelete(fileGitState):
                     os.system("git rm " + fileName)
                     rmDeleteResult += fileName + '\n'
             QMessageBox.information(self, "Result", rmDeleteResult, QMessageBox.Ok)
@@ -236,17 +243,20 @@ class App(QMainWindow):  # main application window를 위한 클래스
             print("git init을 먼저 하세요.")
             QMessageBox.warning(self, "Warning", "git init을 먼저 하세요.", QMessageBox.Ok)
 
+    # need to test
     def GitRmUntrack(self):
         path = self.mainModel.filePath(self.mainExplorer.currentIndex())  # QFileSystemModel의 현재 디렉토리의 경로를 반환하는 함수
         path = path.rsplit('/', 1)[0]
-        if os.path.isdir(path + '/.git'):
+        if self.is_gitrepo(path):
             selectedIndexes = self.mainExplorer.selectionModel().selectedIndexes()
             for file in selectedIndexes:
                 fileName = self.mainModel.itemData(file)[0]
-                fileGitState = self.mainModel.itemData(file)[4]
-                filePath = join(self.currentDir, fileName)
+                filePath = str(self.currentDir) + '/' + str(fileName)
+                if not (isdir(filePath) or isfile(filePath)):
+                    continue
+                fileGitState = self.mainModel.git_statuses[filePath]
                 rmUntrackResult = ""
-                if os.path.exits(filePath) and self.isTargetOfUntrack(fileGitState):
+                if os.path.exists(filePath) and self.isTargetOfUntrack(fileGitState):
                     os.system("git rm --cached " + fileName)
                     rmUntrackResult += fileName + '\n'
             QMessageBox.information(self, "Result", rmUntrackResult, QMessageBox.Ok)
@@ -254,10 +264,11 @@ class App(QMainWindow):  # main application window를 위한 클래스
             print("git init을 먼저 하세요.")
             QMessageBox.warning(self, "Warning", "git init을 먼저 하세요.", QMessageBox.Ok)
     
+    # need to test
     def GitCommit(self):
         path = self.mainModel.filePath(self.mainExplorer.currentIndex())  # QFileSystemModel의 현재 디렉토리의 경로를 반환하는 함수
         path = path.rsplit('/', 1)[0]
-        if os.path.isdir(path + '/.git'):
+        if self.is_gitrepo(path):
             text, ok = QInputDialog.getText(self, 'Commit Message', 'Enter commit message')
             if ok:
                 os.system('git commit -m "' + text + '"')
@@ -390,23 +401,29 @@ class App(QMainWindow):  # main application window를 위한 클래스
     def onKeyPress(self, key): #키보드 이벤트 처리
         if key.key() == Qt.Key_Delete: #Delete키를 눌렀을 때
             self.deleteFiles(None) #deleteFiles함수 호출
+
+    def is_gitrepo(self, dir):
+        if not os.path.exists(dir):
+            return False
+        original_path = os.getcwd()
+        os.chdir(dir)
+        result = os.popen("git status").read()
+        os.chdir(original_path)
+
+        if "not a git" in result:
+            return False
+        return True
+    
     def onDoubleClick(self, event): #더블클릭 이벤트 처리
         itemPath = self.mainModel.fileInfo(event) #더블클릭한 파일의 경로를 가져옴
         itemPath_str = str(itemPath.absoluteFilePath())  # QFileInfo 객체로부터 절대 경로를 얻고 문자열로 변환
+        print(f"onDoubleClick : {itemPath_str}")
         if isdir(itemPath): #더블클릭한 파일이 폴더일 경우
-
-
             self.navigate(event) #navigate함수 호출 #폴더를 열어줌
-            if os.path.isdir(itemPath_str + "/.git"):  # os.path.isdir() : 디렉토리가 존재하는지 확인하는 함수
-                # Git 저장소를 로드
-                repo = Repo('C:\\Users\\kdw3914\\fileexplorer-git-extension')
-
-                # 'git status'를 수행합니다.
-                status_str = repo.git.status()
-
-                # 'git status'결과를 파싱
-                git_statuses = parse_git_status(status_str)
-
+            if self.is_gitrepo(itemPath_str):
+                os.chdir(itemPath_str)
+                statuses_str = os.popen("git status").read()
+                git_statuses = parse_git_status(statuses_str)
                 self.git_status_column_update(itemPath_str, git_statuses)
 
         elif isfile(itemPath): #더블클릭한 파일이 파일일 경우
@@ -450,10 +467,13 @@ class App(QMainWindow):  # main application window를 위한 클래스
                 tmp_item = staged_item.split('/')[0]
                 self.mainModel.update_git_status(itemPath_str + "/" + tmp_item, "staged")
 
-        #itemPath_str의 모든 파일, 폴더들을 순회 - untracked처리
+        #itemPath_str의 모든 파일, 폴더들을 순회 - unmodified처리
         for item in os.listdir(itemPath_str):
             if not(itemPath_str + "/" + item in self.mainModel.git_statuses) and item != ".git":
-                self.mainModel.update_git_status(itemPath_str + "/" + item, "untracked")
+                self.mainModel.update_git_status(itemPath_str + "/" + item, "unmodified")
+        
+        print(itemPath_str)
+        print(git_statuses)
 
 
     def contextItemMenu(self, position): #컨텍스트 메뉴 이벤트 처리
@@ -635,9 +655,11 @@ def parse_git_status(status):
         elif line.startswith(('modified:', 'new file:', 'deleted:', 'renamed:')):
             if current_section:
                 filename = line.split(':   ')[-1]
-                stages[current_section].append(filename)
+                if not '"' in filename and not "'" in filename and not "*" in filename and not "'" in filename and not "?" in filename and not "<" in filename and not ">" in filename and not "|" in filename:
+                    stages[current_section].append(filename)
         elif current_section == 'Untracked files:' and line and line != '(use "git add <file>..." to include in what will be committed)' and line != 'no changes added to commit (use "git add" and/or "git commit -a")':
-            stages[current_section].append(line)
+            if not '"' in line and not "'" in line and not "*" in line and not "'" in line and not "?" in line and not "<" in line and not ">" in line and not "|" in line:
+                stages[current_section].append(line)
 
     # Rename keys for clarity
     stages['staged'] = stages.pop('Changes to be committed:')
