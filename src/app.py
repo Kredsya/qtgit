@@ -392,7 +392,7 @@ class App(QMainWindow):  # main application window를 위한 클래스
             self.deleteFiles(None) #deleteFiles함수 호출
 
     def is_gitrepo(self, dir):
-        if not os.path.exits(dir):
+        if not os.path.exists(dir):
             return False
         original_path = os.getcwd()
         os.chdir(dir)
