@@ -7,7 +7,8 @@ from PyQt5.QtWidgets import QApplication, QStyle, QAbstractItemView, QLineEdit, 
 from PyQt5.QtGui import QIcon, QCursor
 from PyQt5.QtCore import Qt,QDir, QVariant, QSize, QModelIndex
 import sys
-
+from git import Repo, GitCommandError
+import pathspec
 class AboutDialog(QDialog):  # 상단바의 help의 about클릭 시 Made by Antonin Desfontaines.를 출력하는 창을 띄우기 위한 클래스
     # QDialog를 상속받아 만들어진 클래스 // QDialog : 짧은 기간의 일을 처리할 때 사용되는 창(ex.경고창, 메시지 팝업창)을 띄우기 위한 PyQt5의 클래스
     def __init__(self, parent=None):
@@ -42,7 +43,10 @@ class FileSystemModelWithGitStatus(QFileSystemModel):
         return super().headerData(section, orientation, role)
     def update_git_status(self, file_path, status):#FilesystemModelWithGitStatus의 git_statuses필드에 git status를 저장한 후 모델을 업데이트하는 함수- self.data이용
         self.git_statuses[file_path] = status
-        self.data(self.index(file_path), Qt.DisplayRole)
+        try: #만약 git status명령의 출력값을 파싱하는 과정에서 파일 이름이 아니라 다른 메시지가 포함되었으면 그냥 패스하도록.
+            self.data(self.index(file_path), Qt.DisplayRole)
+        except:
+            pass
 
 class App(QMainWindow):  # main application window를 위한 클래스
     def __init__(self, initialDir): 
@@ -390,13 +394,21 @@ class App(QMainWindow):  # main application window를 위한 클래스
         itemPath = self.mainModel.fileInfo(event) #더블클릭한 파일의 경로를 가져옴
         itemPath_str = str(itemPath.absoluteFilePath())  # QFileInfo 객체로부터 절대 경로를 얻고 문자열로 변환
         if isdir(itemPath): #더블클릭한 파일이 폴더일 경우
+
+
             self.navigate(event) #navigate함수 호출 #폴더를 열어줌
             if os.path.isdir(itemPath_str + "/.git"):  # os.path.isdir() : 디렉토리가 존재하는지 확인하는 함수
-                status_str = subprocess.check_output(["git", "status"], universal_newlines=True)
-                # 현재 경로에 있는 모든 파일에 대해 mainExplorer의 update_git_status() 함수를 이용해 Git Status를  업데이트 -  "messege"는 임시로 넣은 값, 이곳에 업데이트 할 내용을 넣으면 됨.
-                for item in os.listdir(itemPath_str):
-                    item_str = itemPath_str + "/" + item
-                    self.mainModel.update_git_status(item_str, "messege")
+                # Git 저장소를 로드
+                repo = Repo('C:\\Users\\kdw3914\\fileexplorer-git-extension')
+
+                # 'git status'를 수행합니다.
+                status_str = repo.git.status()
+
+                # 'git status'결과를 파싱
+                git_statuses = parse_git_status(status_str)
+
+                self.git_status_column_update(itemPath_str, git_statuses)
+
         elif isfile(itemPath): #더블클릭한 파일이 파일일 경우
             if platform.system() == 'Darwin':       # macOS
                 subprocess.call(('open', itemPath)) #open 명령어를 이용하여 파일을 열어줌
@@ -404,6 +416,46 @@ class App(QMainWindow):  # main application window를 위한 클래스
                 os.startfile(itemPath) #startfile 명령어를 이용하여 파일을 열어줌
             else:                                   # linux variants
                 subprocess.call(('xdg-open', itemPath)) #xdg-open 명령어를 이용하여 파일을 열어줌
+
+    def git_status_column_update(self, itemPath_str, git_statuses):
+        self.mainModel.git_statuses = {}
+        # Git Status출력값을 바탕으로 업데이트
+        for untracked_item in git_statuses['untracked']:
+            if itemPath_str + "/" + untracked_item in self.mainModel.git_statuses:
+                self.mainModel.update_git_status(itemPath_str + "/" + untracked_item, self.mainModel.git_statuses[itemPath_str + "/" + untracked_item] + " & untracked")
+            else:
+                self.mainModel.update_git_status(itemPath_str + "/" + untracked_item, "untracked")
+
+            if '/' in untracked_item:
+                tmp_item = untracked_item.split('/')[0]
+                self.mainModel.update_git_status(itemPath_str + "/" + tmp_item, "untracked")
+
+        for modified_item in git_statuses['modified']:
+            if itemPath_str + "/" + modified_item in self.mainModel.git_statuses:
+                self.mainModel.update_git_status(itemPath_str + "/" + modified_item, self.mainModel.git_statuses[itemPath_str + "/" + modified_item] + " & modified")
+            else:
+                self.mainModel.update_git_status(itemPath_str + "/" + modified_item, "modified")
+
+            if '/' in modified_item:
+                tmp_item = modified_item.split('/')[0]
+                self.mainModel.update_git_status(itemPath_str + "/" + tmp_item, "modified")
+
+        for staged_item in git_statuses['staged']:
+            if itemPath_str + "/" + staged_item in self.mainModel.git_statuses:
+                self.mainModel.update_git_status(itemPath_str + "/" + staged_item, self.mainModel.git_statuses[itemPath_str + "/" + staged_item] + " & staged")
+            else:
+                self.mainModel.update_git_status(itemPath_str + "/" + staged_item, "staged")
+
+            if '/' in staged_item:
+                tmp_item = staged_item.split('/')[0]
+                self.mainModel.update_git_status(itemPath_str + "/" + tmp_item, "staged")
+
+        #itemPath_str의 모든 파일, 폴더들을 순회 - untracked처리
+        for item in os.listdir(itemPath_str):
+            if not(itemPath_str + "/" + item in self.mainModel.git_statuses) and item != ".git":
+                self.mainModel.update_git_status(itemPath_str + "/" + item, "untracked")
+
+
     def contextItemMenu(self, position): #컨텍스트 메뉴 이벤트 처리
         index = self.mainExplorer.indexAt(position) #커서가 위치한 곳의 인덱스를 가져옴
         if (index.isValid()): #인덱스가 유효하다면
@@ -565,6 +617,34 @@ class App(QMainWindow):  # main application window를 위한 클래스
         aboutAction.triggered.connect(self.about)  # aboutAction이 triggger될경우  self.about실행//안내메시지 창 띄움
 
         helpMenu.addAction(aboutAction)  # helpMenu(menuBar.addMenu("&Help"))에 Qaction추가
+
+def parse_git_status(status):
+    lines = status.split('\n')
+
+    stages = {
+        'Changes to be committed:': [],
+        'Changes not staged for commit:': [],
+        'Untracked files:': [],
+    }
+
+    current_section = None
+    for line in lines:
+        line = line.strip()
+        if line in stages:
+            current_section = line
+        elif line.startswith(('modified:', 'new file:', 'deleted:', 'renamed:')):
+            if current_section:
+                filename = line.split(':   ')[-1]
+                stages[current_section].append(filename)
+        elif current_section == 'Untracked files:' and line and line != '(use "git add <file>..." to include in what will be committed)' and line != 'no changes added to commit (use "git add" and/or "git commit -a")':
+            stages[current_section].append(line)
+
+    # Rename keys for clarity
+    stages['staged'] = stages.pop('Changes to be committed:')
+    stages['modified'] = stages.pop('Changes not staged for commit:')
+    stages['untracked'] = stages.pop('Untracked files:')
+    return stages
+
 if __name__ == '__main__': #프로그램 실행시 실행되는 부분
     app = QApplication(sys.argv) #QApplication생성
     ex = App(Path.home()) #App생성 #Path.home()은 사용자의 홈디렉토리를 의미 - 홈디렉토리는 윈도우 11 기준 사용자 폴더 #ex는 App객체
