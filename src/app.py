@@ -406,9 +406,11 @@ class App(QMainWindow):  # main application window를 위한 클래스
     def onDoubleClick(self, event): #더블클릭 이벤트 처리
         itemPath = self.mainModel.fileInfo(event) #더블클릭한 파일의 경로를 가져옴
         itemPath_str = str(itemPath.absoluteFilePath())  # QFileInfo 객체로부터 절대 경로를 얻고 문자열로 변환
+        print(f"onDoubleClick : {itemPath_str}")
         if isdir(itemPath): #더블클릭한 파일이 폴더일 경우
             self.navigate(event) #navigate함수 호출 #폴더를 열어줌
             if self.is_gitrepo(itemPath_str):
+                os.chdir(itemPath_str)
                 statuses_str = os.popen("git status").read()
                 git_statuses = parse_git_status(statuses_str)
                 self.git_status_column_update(itemPath_str, git_statuses)
@@ -458,6 +460,9 @@ class App(QMainWindow):  # main application window를 위한 클래스
         for item in os.listdir(itemPath_str):
             if not(itemPath_str + "/" + item in self.mainModel.git_statuses) and item != ".git":
                 self.mainModel.update_git_status(itemPath_str + "/" + item, "unmodified")
+        
+        print(itemPath_str)
+        print(git_statuses)
 
 
     def contextItemMenu(self, position): #컨텍스트 메뉴 이벤트 처리
@@ -639,9 +644,11 @@ def parse_git_status(status):
         elif line.startswith(('modified:', 'new file:', 'deleted:', 'renamed:')):
             if current_section:
                 filename = line.split(':   ')[-1]
-                stages[current_section].append(filename)
+                if not '"' in filename and not "'" in filename and not "*" in filename and not "'" in filename and not "?" in filename and not "<" in filename and not ">" in filename and not "|" in filename:
+                    stages[current_section].append(filename)
         elif current_section == 'Untracked files:' and line and line != '(use "git add <file>..." to include in what will be committed)' and line != 'no changes added to commit (use "git add" and/or "git commit -a")':
-            stages[current_section].append(line)
+            if not '"' in line and not "'" in line and not "*" in line and not "'" in line and not "?" in line and not "<" in line and not ">" in line and not "|" in line:
+                stages[current_section].append(line)
 
     # Rename keys for clarity
     stages['staged'] = stages.pop('Changes to be committed:')
