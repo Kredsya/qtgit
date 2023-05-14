@@ -186,13 +186,10 @@ class App(QMainWindow):  # main application window를 위한 클래스
             selectedIndexes = self.mainExplorer.selectionModel().selectedIndexes()
             for file in selectedIndexes:
                 fileName = self.mainModel.itemData(file)[0]
-                print(f"fileName = {fileName}")
                 filePath = str(self.currentDir) + '/' + str(fileName)
-                print(f"filepath = {filePath}")
                 if not (isdir(filePath) or isfile(filePath)):
                     continue
                 fileGitState = self.mainModel.git_statuses[filePath]
-                print(f"fileGitState = {fileGitState}")
                 addResult = ""
                 if os.path.exists(filePath) and self.isTargetOfAdd(fileGitState):
                     os.system("git add " + fileName)
