@@ -394,10 +394,8 @@ class App(QMainWindow):  # main application window를 위한 클래스
         itemPath = self.mainModel.fileInfo(event) #더블클릭한 파일의 경로를 가져옴
         itemPath_str = str(itemPath.absoluteFilePath())  # QFileInfo 객체로부터 절대 경로를 얻고 문자열로 변환
         if isdir(itemPath): #더블클릭한 파일이 폴더일 경우
-
-
             self.navigate(event) #navigate함수 호출 #폴더를 열어줌
-            if os.path.isdir(itemPath_str + "/.git"):  # os.path.isdir() : 디렉토리가 존재하는지 확인하는 함수
+            if self.is_gitrepo(itemPath_str):  #현재 디렉토리가 레포이거나 레포의 하위 디렉토리인지 확인
                 # Git 저장소를 로드
                 repo = Repo('C:\\Users\\kdw3914\\fileexplorer-git-extension')
 
