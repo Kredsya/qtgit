@@ -416,11 +416,29 @@ class App(QMainWindow):  # main application window를 위한 클래스
                 os.startfile(itemPath) #startfile 명령어를 이용하여 파일을 열어줌
             else:                                   # linux variants
                 subprocess.call(('xdg-open', itemPath)) #xdg-open 명령어를 이용하여 파일을 열어줌
+    def is_gitrepo(self, dir): #git 저장소인지 확인하는 함수
+        if not os.path.exists(dir):
+            return False
+        # 원래의 작업 디렉토리를 저장
+        original_path = os.getcwd()
+
+        # 주어진 절대 경로로 이동
+        os.chdir(dir)
+
+        # git status를 수행하고 결과를 받아옴
+        result = subprocess.run(["git", "status"], capture_output=True, text=True)
+
+        # 원래의 작업 디렉토리로 복귀
+        os.chdir(original_path)
+
+        if "not a git" in result.stderr:
+            return False
+        return True
 
     def git_status_column_update(self, itemPath_str, git_statuses):
         self.mainModel.git_statuses = {}
         # Git Status출력값을 바탕으로 업데이트
-        for untracked_item in git_statuses['untracked']:#untracked_item : 추적되지 않은 파일
+        for untracked_item in git_statuses['untracked']:
             if itemPath_str + "/" + untracked_item in self.mainModel.git_statuses:
                 self.mainModel.update_git_status(itemPath_str + "/" + untracked_item, self.mainModel.git_statuses[itemPath_str + "/" + untracked_item] + " & untracked")
             else:
@@ -430,7 +448,7 @@ class App(QMainWindow):  # main application window를 위한 클래스
                 tmp_item = untracked_item.split('/')[0]
                 self.mainModel.update_git_status(itemPath_str + "/" + tmp_item, "untracked")
 
-        for modified_item in git_statuses['modified']:#modified_item : 수정된 파일
+        for modified_item in git_statuses['modified']:
             if itemPath_str + "/" + modified_item in self.mainModel.git_statuses:
                 self.mainModel.update_git_status(itemPath_str + "/" + modified_item, self.mainModel.git_statuses[itemPath_str + "/" + modified_item] + " & modified")
             else:
@@ -440,7 +458,7 @@ class App(QMainWindow):  # main application window를 위한 클래스
                 tmp_item = modified_item.split('/')[0]
                 self.mainModel.update_git_status(itemPath_str + "/" + tmp_item, "modified")
 
-        for staged_item in git_statuses['staged']:#staged_item : staged된 파일
+        for staged_item in git_statuses['staged']:
             if itemPath_str + "/" + staged_item in self.mainModel.git_statuses:
                 self.mainModel.update_git_status(itemPath_str + "/" + staged_item, self.mainModel.git_statuses[itemPath_str + "/" + staged_item] + " & staged")
             else:
