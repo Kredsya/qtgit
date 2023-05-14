@@ -171,9 +171,6 @@ class App(QMainWindow):  # main application window를 위한 클래스
             # git init 실행
             os.system("git init " + path)
             QMessageBox.information(self, "Information", "git init이 완료되었습니다.", QMessageBox.Ok)
-            #.git은 숨김 파일이므로 숨김 파일을 보이게 하는 명령어 실행
-            os.system("attrib -h -s " + path + "/.git")
-            #숨김처리가 해제된 .git이 gui에서 보이도록 처리
             self.mainModel.setRootPath(path) #QFileSystemModel의 루트 디렉토리를 설정하는 함수
             self.mainExplorer.setRootIndex(self.mainModel.index(path)) #QListView의 루트 인덱스를 설정하는 함수
 
