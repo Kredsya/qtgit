@@ -323,11 +323,20 @@ class App(QMainWindow):  # main application window를 위한 클래스
         if isdir(itemPath): #더블클릭한 파일이 폴더일 경우
             self.navigate(event) #navigate함수 호출 #폴더를 열어줌
             if os.path.isdir(itemPath_str + "/.git"):  # os.path.isdir() : 디렉토리가 존재하는지 확인하는 함수
-                status_str = subprocess.check_output(["git", "status"], universal_newlines=True)
-                # 현재 경로에 있는 모든 파일에 대해 mainExplorer의 update_git_status() 함수를 이용해 Git Status를  업데이트 -  "messege"는 임시로 넣은 값, 이곳에 업데이트 할 내용을 넣으면 됨.
-                for item in os.listdir(itemPath_str):
-                    item_str = itemPath_str + "/" + item
-                    self.mainModel.update_git_status(item_str, "messege")
+                # Git 저장소를 로드
+                repo = Repo('C:\\Users\\kdw3914\\fileexplorer-git-extension')
+
+                # 'git status'를 수행합니다.
+                status_str = repo.git.status()
+
+                # 'git status'결과를 파싱
+                git_statuses = parse_git_status(status_str)
+
+                print(status_str)
+                print(git_statuses)
+
+                self.git_status_column_update(itemPath_str, git_statuses)
+
         elif isfile(itemPath): #더블클릭한 파일이 파일일 경우
             if platform.system() == 'Darwin':       # macOS
                 subprocess.call(('open', itemPath)) #open 명령어를 이용하여 파일을 열어줌
@@ -335,6 +344,53 @@ class App(QMainWindow):  # main application window를 위한 클래스
                 os.startfile(itemPath) #startfile 명령어를 이용하여 파일을 열어줌
             else:                                   # linux variants
                 subprocess.call(('xdg-open', itemPath)) #xdg-open 명령어를 이용하여 파일을 열어줌
+
+    def git_status_column_update(self, itemPath_str, git_statuses):
+        # Git Status를 업데이트
+        for staged_item in git_statuses['staged']:
+            if itemPath_str + "/" + staged_item in self.mainModel.git_statuses:
+                self.mainModel.update_git_status(itemPath_str + "/" + staged_item, self.mainModel.git_statuses[
+                    itemPath_str + "/" + staged_item] + " & staged")
+            else:
+                self.mainModel.update_git_status(itemPath_str + "/" + staged_item, "staged")
+
+            if '/' in staged_item:
+                tmp_item = staged_item.split('/')[0]
+                if itemPath_str + "/" + tmp_item in self.mainModel.git_statuses:
+                    self.mainModel.update_git_status(itemPath_str + "/" + tmp_item, self.mainModel.git_statuses[
+                        itemPath_str + "/" + tmp_item] + " & staged")
+                else:
+                    self.mainModel.update_git_status(itemPath_str + "/" + tmp_item, "staged")
+
+        for modified_item in git_statuses['modified']:
+            if itemPath_str + "/" + modified_item in self.mainModel.git_statuses:
+                self.mainModel.update_git_status(itemPath_str + "/" + modified_item, self.mainModel.git_statuses[
+                    itemPath_str + "/" + modified_item] + " & modified")
+            else:
+                self.mainModel.update_git_status(itemPath_str + "/" + modified_item, "modified")
+
+            if '/' in modified_item:
+                tmp_item = modified_item.split('/')[0]
+                if itemPath_str + "/" + tmp_item in self.mainModel.git_statuses:
+                    self.mainModel.update_git_status(itemPath_str + "/" + tmp_item, self.mainModel.git_statuses[
+                        itemPath_str + "/" + tmp_item] + " & modified")
+                else:
+                    self.mainModel.update_git_status(itemPath_str + "/" + tmp_item, "modified")
+
+        for untracked_item in git_statuses['untracked']:
+            if itemPath_str + "/" + untracked_item in self.mainModel.git_statuses:
+                self.mainModel.update_git_status(itemPath_str + "/" + untracked_item, self.mainModel.git_statuses[
+                    itemPath_str + "/" + untracked_item] + " & modified")
+            else:
+                self.mainModel.update_git_status(itemPath_str + "/" + untracked_item, "modified")
+
+            if '/' in untracked_item:
+                tmp_item = untracked_item.split('/')[0]
+                if itemPath_str + "/" + tmp_item in self.mainModel.git_statuses:
+                    self.mainModel.update_git_status(itemPath_str + "/" + tmp_item, self.mainModel.git_statuses[
+                        itemPath_str + "/" + tmp_item] + " & modified")
+                else:
+                    self.mainModel.update_git_status(itemPath_str + "/" + tmp_item, "modified")
     def contextItemMenu(self, position): #컨텍스트 메뉴 이벤트 처리
         index = self.mainExplorer.indexAt(position) #커서가 위치한 곳의 인덱스를 가져옴
         if (index.isValid()): #인덱스가 유효하다면
@@ -510,7 +566,7 @@ def parse_git_status(status):
             if current_section:
                 filename = line.split(':   ')[-1]
                 stages[current_section].append(filename)
-        elif current_section == 'Untracked files:' and line and line != '(use "git add <file>..." to include in what will be committed)':
+        elif current_section == 'Untracked files:' and line and line != '(use "git add <file>..." to include in what will be committed)' and line != 'no changes added to commit (use "git add" and/or "git commit -a")':
             stages[current_section].append(line)
 
     # Rename keys for clarity
