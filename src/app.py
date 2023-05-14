@@ -225,14 +225,16 @@ class App(QMainWindow):  # main application window를 위한 클래스
     def GitRmDelete(self):
         path = self.mainModel.filePath(self.mainExplorer.currentIndex())  # QFileSystemModel의 현재 디렉토리의 경로를 반환하는 함수
         path = path.rsplit('/', 1)[0]
-        if os.path.isdir(path + '/.git'):
+        if self.is_gitrepo(path):
             selectedIndexes = self.mainExplorer.selectionModel().selectedIndexes()
             for file in selectedIndexes:
                 fileName = self.mainModel.itemData(file)[0]
-                fileGitState = self.mainModel.itemData(file)[4]
-                filePath = join(self.currentDir, fileName)
+                filePath = str(self.currentDir) + '/' + str(fileName)
+                if not (isdir(filePath) or isfile(filePath)):
+                    continue
+                fileGitState = self.mainModel.git_statuses[filePath]
                 rmDeleteResult = ""
-                if os.path.exits(filePath) and self.isTargetOfRmDelete(fileGitState):
+                if os.path.exists(filePath) and self.isTargetOfRmDelete(fileGitState):
                     os.system("git rm " + fileName)
                     rmDeleteResult += fileName + '\n'
             QMessageBox.information(self, "Result", rmDeleteResult, QMessageBox.Ok)
