@@ -136,7 +136,7 @@ class App(QMainWindow):  # main application window를 위한 클래스
             return False
     
     def isTargetOfRestore(self, gitState):
-        if gitState == "unmodified" or gitState == "staged":
+        if gitState == "unmodified" or gitState == "staged" or gitState == "untracked":
             return True
         else:
             return False
@@ -216,7 +216,7 @@ class App(QMainWindow):  # main application window를 위한 클래스
                 if os.path.exists(filePath) and self.isTargetOfRestore(fileGitState):
                     if fileGitState == "unmodified":
                         os.system("git restore " + fileName)
-                    elif fileGitState == "staged":
+                    elif fileGitState == "staged" or fileGitState == "untracked":
                         os.system("git restore --staged " + fileName)
                     restoreResult += fileName + '\n'
             QMessageBox.information(self, "Result", restoreResult, QMessageBox.Ok)
