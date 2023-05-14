@@ -119,7 +119,9 @@ class App(QMainWindow):  # main application window를 위한 클래스
         self.setLayout(layout) #QMainWindow의 레이아웃을 설정
         self.setGeometry(800,600,600,560) #QMainWindow의 위치와 크기를 설정
         self.navigate(self.mainModel.setRootPath(QDir.homePath())) #QMainWindow의 디렉토리를 homePath로 설정
-        self.show() #QMainWindow를 보여줌
+        self.move(100, 100)
+        self.resize(1200, 800)  # QMainWindow의 크기를 설정
+        self.show()  # QMainWindow를 보여줌
     def about(self, event):#상단바의 help의 about클릭 시
         dlg = AboutDialog(self)
         if dlg.exec():#exec() : QDialog의 메소드. QDialog의 창을 띄우는 메소드
@@ -330,6 +332,14 @@ class App(QMainWindow):  # main application window를 위한 클래스
     def navigateUp(self, event): #상위 디렉토리로 가는 메소드
         self.currentDir = os.path.dirname(self.currentDir) #현재 디렉토리의 상위 디렉토리를 설정
         self.navigate(self.mainModel.setRootPath(self.currentDir)) #QListView의 디렉토리를 설정
+        path = self.mainModel.setRootPath(self.currentDir)
+        if self.is_gitrepo(self.currentDir):
+            os.chdir(self.currentDir)
+            statuses_str = os.popen("git status").read()
+            git_statuses = parse_git_status(statuses_str)
+            self.git_status_column_update(self.currentDir, git_statuses)
+        self.navigate(path)
+
     def navigateFromSideTree(self, selected, unselected): #QTreeView의 디렉토리
         print(selected)
     def deleteFiles(self, event): #상단바의 Edit의 delete 클릭시, 선택된 파일들을 삭제하는 메소드
@@ -505,6 +515,13 @@ class App(QMainWindow):  # main application window를 위한 클래스
         print("refresh")
         self.mainModel.setRootPath(self.currentDir)
         self.mainExplorer.setRootIndex(self.mainModel.setRootPath(self.currentDir))
+        path = self.mainModel.setRootPath(self.currentDir)
+        if self.is_gitrepo(self.currentDir):
+            os.chdir(self.currentDir)
+            statuses_str = os.popen("git status").read()
+            git_statuses = parse_git_status(statuses_str)
+            self.git_status_column_update(self.currentDir, git_statuses)
+        self.navigate(path)
 
     def cutFiles(self, event):#관련 QAction이 trigger되었을때 connect되도록 되어있지 않아 무쓸모
         self.selectedFiles = self.mainExplorer.selectionModel().selectedIndexes()
