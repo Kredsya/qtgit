@@ -505,6 +505,13 @@ class App(QMainWindow):  # main application window를 위한 클래스
         print("refresh")
         self.mainModel.setRootPath(self.currentDir)
         self.mainExplorer.setRootIndex(self.mainModel.setRootPath(self.currentDir))
+        path = self.mainModel.setRootPath(self.currentDir)
+        if self.is_gitrepo(self.currentDir):
+            os.chdir(self.currentDir)
+            statuses_str = os.popen("git status").read()
+            git_statuses = parse_git_status(statuses_str)
+            self.git_status_column_update(self.currentDir, git_statuses)
+        self.navigate(path)
 
     def cutFiles(self, event):#관련 QAction이 trigger되었을때 connect되도록 되어있지 않아 무쓸모
         self.selectedFiles = self.mainExplorer.selectionModel().selectedIndexes()
