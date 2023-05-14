@@ -454,10 +454,10 @@ class App(QMainWindow):  # main application window를 위한 클래스
                 tmp_item = staged_item.split('/')[0]
                 self.mainModel.update_git_status(itemPath_str + "/" + tmp_item, "staged")
 
-        #itemPath_str의 모든 파일, 폴더들을 순회 - untracked처리
+        #itemPath_str의 모든 파일, 폴더들을 순회 - unmodified처리
         for item in os.listdir(itemPath_str):
             if not(itemPath_str + "/" + item in self.mainModel.git_statuses) and item != ".git":
-                self.mainModel.update_git_status(itemPath_str + "/" + item, "untracked")
+                self.mainModel.update_git_status(itemPath_str + "/" + item, "unmodified")
 
 
     def contextItemMenu(self, position): #컨텍스트 메뉴 이벤트 처리
