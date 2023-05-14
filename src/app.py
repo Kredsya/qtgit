@@ -153,6 +153,7 @@ class App(QMainWindow):  # main application window를 위한 클래스
         else:
             return False
 
+    # @todo : prototype, maybe error will occur
     def GitAdd(self):
         path = self.mainModel.filePath(self.mainExplorer.currentIndex())  # QFileSystemModel의 현재 디렉토리의 경로를 반환하는 함수
         if os.path.isdir(path + '/.git'):
