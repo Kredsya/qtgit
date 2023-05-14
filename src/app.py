@@ -25,7 +25,7 @@ class AboutDialog(QDialog):  # 상단바의 help의 about클릭 시 Made by Anto
 class FileSystemModelWithGitStatus(QFileSystemModel):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.git_statuses = {}  # A dictionary to store git statuses, where the key is the QModelIndex of file path
+        self.git_statuses = {}  # A dictionary to store git statuses, where the key is the filePath(QModelIndex) of file path
         def columnCount(self, parent=None):
             return super().columnCount() + 1  # Increase the column count by 1
         def data(self, index, role):#QFileSystemModel의data함수를 오버라이딩#QFileSystemModel의4번째 열의 데이터를 git status로 설정
@@ -267,9 +267,15 @@ class App(QMainWindow):  # main application window를 위한 클래스
             self.deleteFiles(None) #deleteFiles함수 호출
     def onDoubleClick(self, event): #더블클릭 이벤트 처리
         itemPath = self.mainModel.fileInfo(event) #더블클릭한 파일의 경로를 가져옴
-
+        itemPath_str = str(itemPath.absoluteFilePath())  # QFileInfo 객체로부터 절대 경로를 얻고 문자열로 변환
         if isdir(itemPath): #더블클릭한 파일이 폴더일 경우
             self.navigate(event) #navigate함수 호출 #폴더를 열어줌
+            if os.path.isdir(itemPath_str + "/.git"):  # os.path.isdir() : 디렉토리가 존재하는지 확인하는 함수
+                status_str = subprocess.check_output(["git", "status"], universal_newlines=True)
+                # 현재 경로에 있는 모든 파일에 대해 mainExplorer의 update_git_status() 함수를 이용해 Git Status를  업데이트 -  "messege"는 임시로 넣은 값, 이곳에 업데이트 할 내용을 넣으면 됨.
+                for item in os.listdir(itemPath_str):
+                    item_str = itemPath_str + "/" + item
+                    self.mainModel.update_git_status(item_str, "messege")
         elif isfile(itemPath): #더블클릭한 파일이 파일일 경우
             if platform.system() == 'Darwin':       # macOS
                 subprocess.call(('open', itemPath)) #open 명령어를 이용하여 파일을 열어줌
