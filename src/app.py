@@ -243,17 +243,20 @@ class App(QMainWindow):  # main application window를 위한 클래스
             print("git init을 먼저 하세요.")
             QMessageBox.warning(self, "Warning", "git init을 먼저 하세요.", QMessageBox.Ok)
 
+    # need to test
     def GitRmUntrack(self):
         path = self.mainModel.filePath(self.mainExplorer.currentIndex())  # QFileSystemModel의 현재 디렉토리의 경로를 반환하는 함수
         path = path.rsplit('/', 1)[0]
-        if os.path.isdir(path + '/.git'):
+        if self.is_gitrepo(path):
             selectedIndexes = self.mainExplorer.selectionModel().selectedIndexes()
             for file in selectedIndexes:
                 fileName = self.mainModel.itemData(file)[0]
-                fileGitState = self.mainModel.itemData(file)[4]
-                filePath = join(self.currentDir, fileName)
+                filePath = str(self.currentDir) + '/' + str(fileName)
+                if not (isdir(filePath) or isfile(filePath)):
+                    continue
+                fileGitState = self.mainModel.git_statuses[filePath]
                 rmUntrackResult = ""
-                if os.path.exits(filePath) and self.isTargetOfUntrack(fileGitState):
+                if os.path.exists(filePath) and self.isTargetOfUntrack(fileGitState):
                     os.system("git rm --cached " + fileName)
                     rmUntrackResult += fileName + '\n'
             QMessageBox.information(self, "Result", rmUntrackResult, QMessageBox.Ok)
