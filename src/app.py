@@ -390,6 +390,19 @@ class App(QMainWindow):  # main application window를 위한 클래스
     def onKeyPress(self, key): #키보드 이벤트 처리
         if key.key() == Qt.Key_Delete: #Delete키를 눌렀을 때
             self.deleteFiles(None) #deleteFiles함수 호출
+
+    def is_gitrepo(self, dir):
+        if not os.path.exits(dir):
+            return False
+        original_path = os.getcwd()
+        os.chdir(dir)
+        result = os.popen("git status").read()
+        os.chdir(original_path)
+
+        if "not a git" in result:
+            return False
+        return True
+    
     def onDoubleClick(self, event): #더블클릭 이벤트 처리
         itemPath = self.mainModel.fileInfo(event) #더블클릭한 파일의 경로를 가져옴
         itemPath_str = str(itemPath.absoluteFilePath())  # QFileInfo 객체로부터 절대 경로를 얻고 문자열로 변환
