@@ -25,28 +25,24 @@ class AboutDialog(QDialog):  # 상단바의 help의 about클릭 시 Made by Anto
 class FileSystemModelWithGitStatus(QFileSystemModel):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.git_statuses = {}  # A dictionary to store git statuses, where the key is the file path
-
-    def columnCount(self, parent=None):
-        return super().columnCount() + 1  # Increase the column count by 1
-
-    def data(self, index, role):
-        if index.column() == 4 and role == Qt.DisplayRole:
-            # Return the git status if it's the additional column
-            return self.git_statuses.get(self.filePath(index), "")
-        return super().data(index, role)
-
-    def headerData(self, section, orientation, role=Qt.DisplayRole):
+        self.git_statuses = {}  # A dictionary to store git statuses, where the key is the QModelIndex of file path
+        def columnCount(self, parent=None):
+            return super().columnCount() + 1  # Increase the column count by 1
+        def data(self, index, role):#QFileSystemModel의data함수를 오버라이딩#QFileSystemModel의4번째 열의 데이터를 git status로 설정
+            if index.column() == 4 and role == Qt.DisplayRole:
+                # If the column is 4 (the git status column) and the role is DisplayRole, return the git status with self.git_statuses[index]
+                if self.filePath(index) in self.git_statuses:
+                    return self.git_statuses.get(self.filePath(index), self.git_statuses[self.filePath(index)])
+                else:
+                    return self.git_statuses.get(self.filePath(index), "")
+            return super().data(index, role)
+    def headerData(self, section, orientation, role=Qt.DisplayRole):#QFileSystemModel의headerData함수를 오버라이딩 #QFileSystemModel의4번째 열의 헤더를"Git Status"로 설정
         if section == 4 and role == Qt.DisplayRole:
             return "Git Status"
         return super().headerData(section, orientation, role)
-
-    def update_git_status(self, file_path, status):
+    def update_git_status(self, file_path, status):#FilesystemModelWithGitStatus의 git_statuses필드에 git status를 저장한 후 모델을 업데이트하는 함수- self.data이용
         self.git_statuses[file_path] = status
-        # Find the index of the file path
-        index = self.index(file_path)
-        # Emit the dataChanged signal to update the view
-        self.dataChanged.emit(index, index)
+        self.data(self.index(file_path), Qt.DisplayRole)
 
 class App(QMainWindow):  # main application window를 위한 클래스
     def __init__(self, initialDir): 
