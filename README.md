@@ -19,6 +19,23 @@ git clone https://github.com/Kredsya/qtgit.git
 pip3 install pyqt5
 ```
 
+or you can also try this command
+```shell
+pip install pyqt5
+```
+
+## Execution
+
+```shell
+python3 src/app.py
+```
+
+or you can also try this command
+
+```shell
+python src/app.py
+```
+
 ## Documentation
 
 Refer *documentation.md*.
