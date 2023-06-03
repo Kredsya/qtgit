@@ -7,6 +7,8 @@ from PyQt5.QtWidgets import QApplication, QAbstractItemView, QLineEdit, QTableVi
 from PyQt5.QtGui import QIcon, QCursor
 from PyQt5.QtCore import Qt,QDir, QSize
 import sys
+from isTarget import *
+
 class AboutDialog(QDialog):  # 상단바의 help의 about클릭 시 Made by Antonin Desfontaines.를 출력하는 창을 띄우기 위한 클래스
     # QDialog를 상속받아 만들어진 클래스 // QDialog : 짧은 기간의 일을 처리할 때 사용되는 창(ex.경고창, 메시지 팝업창)을 띄우기 위한 PyQt5의 클래스
     def __init__(self, parent=None):
@@ -127,38 +129,6 @@ class App(QMainWindow):  # main application window를 위한 클래스
         else: # Cancel 출력 -창의 x버튼을 누르면
             print("Cancel!")
 
-    def isTargetOfAdd(self, gitState):
-        if gitState == "modified" or gitState == "untracked":
-            return True
-        elif gitState == "modified & staged":
-            return True
-        else:
-            return False
-    
-    def isTargetOfRestore(self, gitState):
-        if gitState == "unmodified" or gitState == "staged" or gitState == "untracked" or gitState == "modified & staged":
-            return True
-        else:
-            return False
-    
-    def isTargetOfRmDelete(self, gitState):
-        if gitState != "untracked":
-            return True
-        else:
-            return False
-
-    def isTargetOfUntrack(self, gitState):
-        if gitState != "untracked":
-            return True
-        else:
-            return False
-    
-    def isTargetOfCommit(self, gitState):
-        if gitState == "staged":
-            return True
-        else:
-            return False
-
     def GitInit(self):  # 상단바의 Git의 Init을 클릭 시 - git init을 실행하는 메소드(현재 디렉토리에 .git이 없는 디렉토리에서만 git init 실행) - .git이 있을 경우 경고 창
         # 현재 디렉토리 확인
         path = self.mainModel.filePath(self.mainExplorer.currentIndex())  # QFileSystemModel의 현재 디렉토리의 경로를 반환하는 함수
@@ -193,7 +163,7 @@ class App(QMainWindow):  # main application window를 위한 클래스
                 fileGitState = self.mainModel.git_statuses[filePath]
                 print(f"fileGitState = {fileGitState}")
                 addResult = ""
-                if os.path.exists(filePath) and self.isTargetOfAdd(fileGitState):
+                if os.path.exists(filePath) and isTargetOfAdd(fileGitState):
                     os.system("git add " + fileName)
                     addResult += fileName + '\n'
             QMessageBox.information(self, "Result", addResult, QMessageBox.Ok)
@@ -213,7 +183,7 @@ class App(QMainWindow):  # main application window를 위한 클래스
                     continue
                 fileGitState = self.mainModel.git_statuses[filePath]
                 restoreResult = ""
-                if os.path.exists(filePath) and self.isTargetOfRestore(fileGitState):
+                if os.path.exists(filePath) and isTargetOfRestore(fileGitState):
                     if fileGitState == "unmodified" or fileGitState == "modified & staged":
                         os.system("git restore " + fileName)
                     elif fileGitState == "staged" or fileGitState == "untracked":
@@ -236,7 +206,7 @@ class App(QMainWindow):  # main application window를 위한 클래스
                     continue
                 fileGitState = self.mainModel.git_statuses[filePath]
                 rmDeleteResult = ""
-                if os.path.exists(filePath) and self.isTargetOfRmDelete(fileGitState):
+                if os.path.exists(filePath) and isTargetOfRmDelete(fileGitState):
                     if fileGitState == "modified & staged":
                         os.system("git rm -f " + fileName)
                     else:
@@ -259,7 +229,7 @@ class App(QMainWindow):  # main application window를 위한 클래스
                     continue
                 fileGitState = self.mainModel.git_statuses[filePath]
                 rmUntrackResult = ""
-                if os.path.exists(filePath) and self.isTargetOfUntrack(fileGitState):
+                if os.path.exists(filePath) and isTargetOfUntrack(fileGitState):
                     if fileGitState == "modified & staged":
                         os.system("git rm --cached -f " + fileName)
                     else:
