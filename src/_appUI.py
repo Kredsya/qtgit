@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import QLineEdit, QSplitter, QWidget, QVBoxLayout, QHBoxLayout, QToolButton, QWidget, QFileSystemModel, QTreeView, QFrame
 from PyQt5.QtGui import QIcon
 from PyQt5.QtCore import Qt,QDir
+from _navigator import navigator
 
 class FileSystemModelWithGitStatus(QFileSystemModel):
     def __init__(self, parent=None):
@@ -27,7 +28,7 @@ class FileSystemModelWithGitStatus(QFileSystemModel):
         except:
             pass
 
-class appUI():
+class appUI(navigator):
     def initUI(self): # UI를 초기화하는 함수
         # Status bar
         self.statusBar() # 상태바를 생성하는 함수

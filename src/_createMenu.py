@@ -1,6 +1,7 @@
 from PyQt5.QtWidgets import QAction
+from _fileAction import fileAction
 
-class createMenu():
+class createMenu(fileAction):
     def createTopMenu(self):
         # Add menus
         menuBar = self.menuBar()  # 상단 메뉴바
