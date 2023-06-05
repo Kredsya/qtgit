@@ -12,38 +12,38 @@ class GitLogViewer(QWidget):
         super().__init__()
         self.initUI()
 
-        def initUI(self):
-            self.setGeometry(300, 300, 1400, 1000)
-            self.setWindowTitle('Git Log')
+    def initUI(self):
+        self.setGeometry(300, 300, 1400, 1000)
+        self.setWindowTitle('Git Log')
 
-            self.vbox = QVBoxLayout()
-            self.setLayout(self.vbox)
+        self.vbox = QVBoxLayout()
+        self.setLayout(self.vbox)
 
-            self.listWidget = QListWidget()
-            self.listWidget.setFont(QFont('Courier New', 10))  # Set the font
+        self.listWidget = QListWidget()
+        self.listWidget.setFont(QFont('Courier New', 10))  # Set the font
 
-            self.textEdit1 = QTextEdit()
-            self.textEdit1.setReadOnly(True)
+        self.textEdit1 = QTextEdit()
+        self.textEdit1.setReadOnly(True)
 
-            self.textEdit2 = QTextEdit()
-            self.textEdit2.setReadOnly(True)
-            self.textEdit3 = QTextEdit()
-            self.textEdit3.setReadOnly(True)
+        self.textEdit2 = QTextEdit()
+        self.textEdit2.setReadOnly(True)
+        self.textEdit3 = QTextEdit()
+        self.textEdit3.setReadOnly(True)
 
-            self.vbox.addWidget(self.listWidget)
-            self.vbox.addWidget(self.textEdit1)
-            self.vbox.addWidget(self.textEdit2)
-            self.vbox.addWidget(self.textEdit3)
+        self.vbox.addWidget(self.listWidget)
+        self.vbox.addWidget(self.textEdit1)
+        self.vbox.addWidget(self.textEdit2)
+        self.vbox.addWidget(self.textEdit3)
 
-            # 높이 비율 설정
-            self.vbox.setStretch(0, 100)
-            self.vbox.setStretch(1, 1)
-            self.vbox.setStretch(2, 1)
-            self.vbox.setStretch(3, 100)
+        # 높이 비율 설정
+        self.vbox.setStretch(0, 100)
+        self.vbox.setStretch(1, 1)
+        self.vbox.setStretch(2, 1)
+        self.vbox.setStretch(3, 100)
 
-            self.listWidget.itemClicked.connect(self.on_itemClicked)
+        self.listWidget.itemClicked.connect(self.on_itemClicked)
 
-            self.load_git_log()
+        self.load_git_log()
 
     def load_git_log(self):
         output = subprocess.check_output(['git', 'log', '--all', '--decorate', '--color', '--oneline', '--graph'],
@@ -51,8 +51,8 @@ class GitLogViewer(QWidget):
         logs = output.split('\n')
 
         for log in logs:
-            self.log_except_color[log] = remove_ansi_color_codes(log)
             self.listWidget.addItem(log)
+
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     ex = GitLogViewer()
