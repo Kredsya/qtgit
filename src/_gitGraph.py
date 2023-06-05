@@ -1,6 +1,7 @@
 import sys
 from PyQt5.QtWidgets import QWidget, QApplication, QVBoxLayout, QListWidget, QTextEdit
 import re
+import subprocess
 from PyQt5.QtGui import QFont
 def remove_ansi_color_codes(text):
     ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
@@ -44,6 +45,14 @@ class GitLogViewer(QWidget):
 
             self.load_git_log()
 
+    def load_git_log(self):
+        output = subprocess.check_output(['git', 'log', '--all', '--decorate', '--color', '--oneline', '--graph'],
+                                         encoding='utf8')
+        logs = output.split('\n')
+
+        for log in logs:
+            self.log_except_color[log] = remove_ansi_color_codes(log)
+            self.listWidget.addItem(log)
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     ex = GitLogViewer()
