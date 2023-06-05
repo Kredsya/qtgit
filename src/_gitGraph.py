@@ -1,6 +1,11 @@
 import sys
 from PyQt5.QtWidgets import QWidget, QApplication, QVBoxLayout, QListWidget, QTextEdit
+import re
 from PyQt5.QtGui import QFont
+def remove_ansi_color_codes(text):
+    ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
+    return ansi_escape.sub('', text)
+
 class GitLogViewer(QWidget):
     def __init__(self):
         super().__init__()
