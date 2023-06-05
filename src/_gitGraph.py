@@ -53,6 +53,47 @@ class GitLogViewer(QWidget):
         for log in logs:
             self.listWidget.addItem(log)
 
+    def on_itemClicked(self, item):
+        log = remove_ansi_color_codes(item.text())
+        # log에서 '\','*','|','/'를 제거
+        log = log.replace('\\', '')
+        log = log.replace('*', '')
+        log = log.replace('|', '')
+        log = log.replace('/', '')
+        # log에서 commit hash만 추출
+        commit_hash = log.split(' ')
+        while '' in commit_hash:
+            commit_hash.remove('')
+        if len(commit_hash) == 0:
+            self.textEdit1.setPlainText("커밋오브젝트가 아닙니다.")
+            self.textEdit2.setPlainText("")
+            self.textEdit3.setPlainText("")
+            return
+        commit_hash = commit_hash[0]
+
+        details = subprocess.check_output(['git', 'show', '--pretty=format:%ci%n%an%n%d', commit_hash], encoding='utf8')
+        tmp = details.split('\n')
+        commit_time = tmp[0]
+        commit_author = tmp[1]
+
+        commit_time = commit_time.split()
+        commit_time = "날짜 : " + commit_time[0] + "\n시간 : " + commit_time[1] + "(" + commit_time[2]+ ")"
+        # git show 명령어 실행
+        command = ["git", "show", "--format=%an <%ae>", commit_hash]
+        result = subprocess.run(command, capture_output=True, text=True, encoding='utf-8')
+        author_email = result.stdout.strip().split('<')[1].split('>')[0]
+        commit_author = "이름 : " + commit_author + "\n이메일 : " + author_email
+
+        if "index" in details:
+            details = details.split("index")[1]
+            details = details.split("\n", 1)[1]
+            details = "변경사항\n" + details
+        else:
+            details = log.lstrip()
+        self.textEdit1.setPlainText(commit_time)
+        self.textEdit2.setPlainText(commit_author)
+        self.textEdit3.setPlainText(details)
+
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     ex = GitLogViewer()
