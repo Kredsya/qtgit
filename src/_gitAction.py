@@ -32,6 +32,7 @@ class gitAction(refreshAction):
         print(path)
         if is_gitrepo(path):
             selectedIndexes = self.mainExplorer.selectionModel().selectedIndexes()
+            addResult = ""
             for file in selectedIndexes:
                 fileName = self.mainModel.itemData(file)[0]
                 filePath = str(self.currentDir) + '/' + str(fileName)
@@ -39,7 +40,6 @@ class gitAction(refreshAction):
                     continue
                 fileGitState = self.mainModel.git_statuses[filePath]
                 print(f"fileGitState = {fileGitState}")
-                addResult = ""
                 if os.path.exists(filePath) and isTargetOfAdd(fileGitState):
                     os.system("git add " + fileName)
                     addResult += fileName + '\n'
@@ -55,19 +55,19 @@ class gitAction(refreshAction):
         path = path.rsplit('/', 1)[0]
         if is_gitrepo(path):
             selectedIndexes = self.mainExplorer.selectionModel().selectedIndexes()
+            restoreResult = ""
             for file in selectedIndexes:
                 fileName = self.mainModel.itemData(file)[0]
                 filePath = str(self.currentDir) + '/' + str(fileName)
                 if not (isdir(filePath) or isfile(filePath)):
                     continue
                 fileGitState = self.mainModel.git_statuses[filePath]
-                restoreResult = ""
                 if os.path.exists(filePath) and isTargetOfRestore(fileGitState):
                     if fileGitState == "unmodified" or fileGitState == "modified & staged":
                         os.system("git restore " + fileName)
                     elif fileGitState == "staged" or fileGitState == "untracked":
                         os.system("git restore --staged " + fileName)
-                    restoreResult += fileName + ', '
+                    restoreResult += fileName + '\n'
             QMessageBox.information(self, "Result", restoreResult, QMessageBox.Ok)
             self.mainModel.setRootPath(path)
             self.mainExplorer.setRootIndex(self.mainModel.index(path))
@@ -80,19 +80,19 @@ class gitAction(refreshAction):
         path = path.rsplit('/', 1)[0]
         if is_gitrepo(path):
             selectedIndexes = self.mainExplorer.selectionModel().selectedIndexes()
+            rmDeleteResult = ""
             for file in selectedIndexes:
                 fileName = self.mainModel.itemData(file)[0]
                 filePath = str(self.currentDir) + '/' + str(fileName)
                 if not (isdir(filePath) or isfile(filePath)):
                     continue
                 fileGitState = self.mainModel.git_statuses[filePath]
-                rmDeleteResult = ""
                 if os.path.exists(filePath) and isTargetOfRmDelete(fileGitState):
                     if fileGitState == "modified & staged":
                         os.system("git rm -f " + fileName)
                     else:
                         os.system("git rm " + fileName)
-                    rmDeleteResult += fileName + ', '
+                    rmDeleteResult += fileName + '\n'
             QMessageBox.information(self, "Result", rmDeleteResult, QMessageBox.Ok)
             self.mainModel.setRootPath(path)
             self.mainExplorer.setRootIndex(self.mainModel.index(path))
@@ -105,19 +105,19 @@ class gitAction(refreshAction):
         path = path.rsplit('/', 1)[0]
         if is_gitrepo(path):
             selectedIndexes = self.mainExplorer.selectionModel().selectedIndexes()
+            rmUntrackResult = ""
             for file in selectedIndexes:
                 fileName = self.mainModel.itemData(file)[0]
                 filePath = str(self.currentDir) + '/' + str(fileName)
                 if not (isdir(filePath) or isfile(filePath)):
                     continue
                 fileGitState = self.mainModel.git_statuses[filePath]
-                rmUntrackResult = ""
                 if os.path.exists(filePath) and isTargetOfUntrack(fileGitState):
                     if fileGitState == "modified & staged":
                         os.system("git rm --cached -f " + fileName)
                     else:
                         os.system("git rm --cached " + fileName)
-                    rmUntrackResult += fileName + ', '
+                    rmUntrackResult += fileName + '\n'
             QMessageBox.information(self, "Result", rmUntrackResult, QMessageBox.Ok)
             self.mainModel.setRootPath(path)
             self.mainExplorer.setRootIndex(self.mainModel.index(path))
