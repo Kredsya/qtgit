@@ -3,6 +3,12 @@ from PyQt5.QtWidgets import QWidget, QApplication, QVBoxLayout, QListWidget, QTe
 import re
 import subprocess
 from PyQt5.QtGui import QFont
+from ansi2html import Ansi2HTMLConverter
+def convert_ansi_to_html(ansi_str):
+    conv = Ansi2HTMLConverter()
+    html = conv.convert(ansi_str)
+    return html
+
 def remove_ansi_color_codes(text):
     ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
     return ansi_escape.sub('', text)
