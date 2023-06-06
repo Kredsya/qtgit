@@ -4,6 +4,20 @@ import re
 import subprocess
 from PyQt5.QtGui import QFont
 from ansi2html import Ansi2HTMLConverter
+from bs4 import BeautifulSoup
+def remove_html_css(content):
+    soup = BeautifulSoup(content, "html.parser")
+
+    # Remove all style (css) tags
+    for style in soup("style"):
+        style.decompose()
+
+    # Get the text property of the soup object
+    text = soup.get_text(separator=" ")
+
+    # Use regular expressions to further clean up, remove extra whitespaces
+    text = re.sub(r'\s+', ' ', text)
+    return text
 def convert_ansi_to_html(ansi_str):
     conv = Ansi2HTMLConverter()
     html = conv.convert(ansi_str)
