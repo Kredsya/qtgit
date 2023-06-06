@@ -67,8 +67,6 @@ class GitLogViewer(QWidget):
         self.vbox.setStretch(2, 1)
         self.vbox.setStretch(3, 100)
 
-        self.listWidget.itemClicked.connect(self.on_itemClicked)
-
         self.load_git_log()
 
     def load_git_log(self):
