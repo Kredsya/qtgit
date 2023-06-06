@@ -1,14 +1,14 @@
 import os
-from _gitAction import gitAction, parse_git_status
+from _gitAction import parse_git_status, is_gitrepo
 from _eventController import eventController
 
-class refreshAction(gitAction, eventController):
+class refreshAction(eventController):
     def refresh(self, event):#새로고침 이벤트 처리
         print("refresh")
         self.mainModel.setRootPath(self.currentDir)
         self.mainExplorer.setRootIndex(self.mainModel.setRootPath(self.currentDir))
         path = self.mainModel.setRootPath(self.currentDir)
-        if self.is_gitrepo(self.currentDir):
+        if is_gitrepo(self.currentDir):
             os.chdir(self.currentDir)
             statuses_str = os.popen("git status").read()
             git_statuses = parse_git_status(statuses_str)
