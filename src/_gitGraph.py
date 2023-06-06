@@ -79,7 +79,7 @@ class GitLogViewer(QWidget):
             label = ClickableQLabel(html_str.replace('*', '●'), self.listWidget)
             label.setTextFormat(Qt.RichText)
             item = QListWidgetItem()
-            item.setSizeHint(QSize(100, 15))
+            item.setSizeHint(QSize(100, 18))
             self.listWidget.addItem(item)
             self.listWidget.setItemWidget(item, label)
 
