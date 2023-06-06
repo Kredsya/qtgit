@@ -55,11 +55,12 @@ class GitLogViewer(QWidget):
 
     def on_itemClicked(self, item):
         log = remove_ansi_color_codes(item.text())
-        # log에서 '\','*','|','/'를 제거
+        # log에서 '\','*','|','/','_'를 제거
         log = log.replace('\\', '')
         log = log.replace('*', '')
         log = log.replace('|', '')
         log = log.replace('/', '')
+        log = log.replace('_', '')
         # log에서 commit hash만 추출
         commit_hash = log.split(' ')
         while '' in commit_hash:
