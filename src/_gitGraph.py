@@ -83,11 +83,10 @@ class GitLogViewer(QWidget):
             self.listWidget.addItem(item)
             self.listWidget.setItemWidget(item, label)
 
-    def on_itemClicked(self, item):
-        log = remove_ansi_color_codes(item.text())
-        # log에서 '\','*','|','/','_'를 제거
+    def on_itemClicked(self, log):
+        # log에서 '\','●','|','/','_'를 제거
         log = log.replace('\\', '')
-        log = log.replace('*', '')
+        log = log.replace('●', '')
         log = log.replace('|', '')
         log = log.replace('/', '')
         log = log.replace('_', '')
