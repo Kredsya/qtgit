@@ -29,7 +29,7 @@ def parse_git_status(status):
     stages['untracked'] = stages.pop('Untracked files:')
     return stages
 
-def is_gitrepo(self, dir):
+def is_gitrepo(dir):
     if not os.path.exists(dir):
         return False
     original_path = os.getcwd()

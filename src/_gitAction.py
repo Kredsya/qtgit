@@ -44,8 +44,7 @@ class gitAction(refreshAction):
                     os.system("git add " + fileName)
                     addResult += fileName + '\n'
             QMessageBox.information(self, "Result", addResult, QMessageBox.Ok)
-            self.mainModel.setRootPath(path)
-            self.mainExplorer.setRootIndex(self.mainModel.index(path))
+            self.refresh()
         else:
             print("git init을 먼저 하세요.")
             QMessageBox.warning(self, "Warning", "git init을 먼저 하세요.", QMessageBox.Ok)
@@ -69,8 +68,7 @@ class gitAction(refreshAction):
                         os.system("git restore --staged " + fileName)
                     restoreResult += fileName + '\n'
             QMessageBox.information(self, "Result", restoreResult, QMessageBox.Ok)
-            self.mainModel.setRootPath(path)
-            self.mainExplorer.setRootIndex(self.mainModel.index(path))
+            self.refresh()
         else:
             print("git init을 먼저 하세요.")
             QMessageBox.warning(self, "Warning", "git init을 먼저 하세요.", QMessageBox.Ok)
@@ -94,8 +92,7 @@ class gitAction(refreshAction):
                         os.system("git rm " + fileName)
                     rmDeleteResult += fileName + '\n'
             QMessageBox.information(self, "Result", rmDeleteResult, QMessageBox.Ok)
-            self.mainModel.setRootPath(path)
-            self.mainExplorer.setRootIndex(self.mainModel.index(path))
+            self.refresh()
         else:
             print("git init을 먼저 하세요.")
             QMessageBox.warning(self, "Warning", "git init을 먼저 하세요.", QMessageBox.Ok)
@@ -119,13 +116,11 @@ class gitAction(refreshAction):
                         os.system("git rm --cached " + fileName)
                     rmUntrackResult += fileName + '\n'
             QMessageBox.information(self, "Result", rmUntrackResult, QMessageBox.Ok)
-            self.mainModel.setRootPath(path)
-            self.mainExplorer.setRootIndex(self.mainModel.index(path))
+            self.refresh()
         else:
             print("git init을 먼저 하세요.")
             QMessageBox.warning(self, "Warning", "git init을 먼저 하세요.", QMessageBox.Ok)
 
-    # unused function
     def GitCommit(self):
         path = self.mainModel.filePath(self.mainExplorer.currentIndex())  # QFileSystemModel의 현재 디렉토리의 경로를 반환하는 함수
         path = path.rsplit('/', 1)[0]
@@ -136,6 +131,7 @@ class gitAction(refreshAction):
                 QMessageBox.information(self, "Result", "Commit is done", QMessageBox.Ok)
             else:
                 QMessageBox.warning(self, "Warning", "Error : unvalid commit message", QMessageBox.Ok)
+            self.refresh()
         else:
             print("git init을 먼저 하세요.")
             QMessageBox.warning(self, "Warning", "git init을 먼저 하세요.", QMessageBox.Ok)

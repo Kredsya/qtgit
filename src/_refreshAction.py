@@ -3,7 +3,7 @@ from _gitAction import parse_git_status, is_gitrepo
 from _eventController import eventController
 
 class refreshAction(eventController):
-    def refresh(self, event):#새로고침 이벤트 처리
+    def refresh(self):#새로고침 이벤트 처리
         print("refresh")
         self.mainModel.setRootPath(self.currentDir)
         self.mainExplorer.setRootIndex(self.mainModel.setRootPath(self.currentDir))
