@@ -1,8 +1,9 @@
 import sys
-from PyQt5.QtWidgets import QWidget, QApplication, QVBoxLayout, QListWidget, QTextEdit, QLabel
+from PyQt5.QtWidgets import QWidget, QApplication, QVBoxLayout, QListWidget, QTextEdit, QLabel, QListWidgetItem
 import re
 import subprocess
 from PyQt5.QtGui import QFont
+from PyQt5.QtCore import QSize, Qt
 from ansi2html import Ansi2HTMLConverter
 from bs4 import BeautifulSoup
 def remove_html_css(content):
@@ -45,7 +46,7 @@ class GitLogViewer(QWidget):
         self.setLayout(self.vbox)
 
         self.listWidget = QListWidget()
-        self.listWidget.setFont(QFont('Courier New', 10))  # Set the font
+        self.listWidget.setFont(QFont('Courier New', 10))
 
         self.textEdit1 = QTextEdit()
         self.textEdit1.setReadOnly(True)
@@ -76,7 +77,13 @@ class GitLogViewer(QWidget):
         logs = output.split('\n')
 
         for log in logs:
-            self.listWidget.addItem(log)
+            html_str = convert_ansi_to_html(log)
+            label = ClickableQLabel(html_str.replace('*', '●'), self.listWidget)
+            label.setTextFormat(Qt.RichText)
+            item = QListWidgetItem()
+            item.setSizeHint(QSize(100, 15))
+            self.listWidget.addItem(item)
+            self.listWidget.setItemWidget(item, label)
 
     def on_itemClicked(self, item):
         log = remove_ansi_color_codes(item.text())
