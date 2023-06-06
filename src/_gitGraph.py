@@ -1,5 +1,5 @@
 import sys
-from PyQt5.QtWidgets import QWidget, QApplication, QVBoxLayout, QListWidget, QTextEdit
+from PyQt5.QtWidgets import QWidget, QApplication, QVBoxLayout, QListWidget, QTextEdit, QLabel
 import re
 import subprocess
 from PyQt5.QtGui import QFont
@@ -26,7 +26,12 @@ def convert_ansi_to_html(ansi_str):
 def remove_ansi_color_codes(text):
     ansi_escape = re.compile(r'\x1B(?:[@-Z\\-_]|\[[0-?]*[ -/]*[@-~])')
     return ansi_escape.sub('', text)
+class ClickableQLabel(QLabel):
+    def __init__(self, text=None, parent=None):
+        QLabel.__init__(self, text, parent)
 
+    def mouseReleaseEvent(self, QMouseEvent):
+        self.parent().parent().parent().on_itemClicked(remove_html_css(self.text()))
 class GitLogViewer(QWidget):
     def __init__(self):
         super().__init__()
