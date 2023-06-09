@@ -19,6 +19,9 @@ class GitClone(QWidget):
         self.setGeometry(300, 300, 300, 50)
         self.setWindowTitle("Git Clone")
 
+        self.vbox = QVBoxLayout()
+        self.setLayout(self.vbox)
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
