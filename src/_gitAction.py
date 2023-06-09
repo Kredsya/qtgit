@@ -22,9 +22,7 @@ class gitAction(refreshAction):
             #.git은 숨김 파일이므로 숨김 파일을 보이게 하는 명령어 실행
             os.system("attrib -h -s " + path + "/.git")
             #숨김처리가 해제된 .git이 gui에서 보이도록 처리
-            self.mainModel.setRootPath(path) #QFileSystemModel의 루트 디렉토리를 설정하는 함수
-            self.mainExplorer.setRootIndex(self.mainModel.index(path)) #QListView의 루트 인덱스를 설정하는 함수
-
+            self.refresh()
 
     def GitAdd(self):
         path = self.mainModel.filePath(self.mainExplorer.currentIndex())  # QFileSystemModel의 현재 디렉토리의 경로를 반환하는 함수
@@ -33,13 +31,13 @@ class gitAction(refreshAction):
         if is_gitrepo(path):
             selectedIndexes = self.mainExplorer.selectionModel().selectedIndexes()
             addResult = ""
-            for file in selectedIndexes:
+            for index in range(0, len(selectedIndexes), 5):
+                file = selectedIndexes[index]
                 fileName = self.mainModel.itemData(file)[0]
-                filePath = str(self.currentDir) + '/' + str(fileName)
+                filePath = str(path) + '/' + str(fileName)
                 if not (isdir(filePath) or isfile(filePath)):
                     continue
                 fileGitState = self.mainModel.git_statuses[filePath]
-                print(f"fileGitState = {fileGitState}")
                 if os.path.exists(filePath) and isTargetOfAdd(fileGitState):
                     os.system("git add " + fileName)
                     addResult += fileName + '\n'
@@ -55,7 +53,8 @@ class gitAction(refreshAction):
         if is_gitrepo(path):
             selectedIndexes = self.mainExplorer.selectionModel().selectedIndexes()
             restoreResult = ""
-            for file in selectedIndexes:
+            for index in range(0, len(selectedIndexes), 5):
+                file = selectedIndexes[index]
                 fileName = self.mainModel.itemData(file)[0]
                 filePath = str(self.currentDir) + '/' + str(fileName)
                 if not (isdir(filePath) or isfile(filePath)):
@@ -79,7 +78,8 @@ class gitAction(refreshAction):
         if is_gitrepo(path):
             selectedIndexes = self.mainExplorer.selectionModel().selectedIndexes()
             rmDeleteResult = ""
-            for file in selectedIndexes:
+            for index in range(0, len(selectedIndexes), 5):
+                file = selectedIndexes[index]
                 fileName = self.mainModel.itemData(file)[0]
                 filePath = str(self.currentDir) + '/' + str(fileName)
                 if not (isdir(filePath) or isfile(filePath)):
@@ -103,7 +103,8 @@ class gitAction(refreshAction):
         if is_gitrepo(path):
             selectedIndexes = self.mainExplorer.selectionModel().selectedIndexes()
             rmUntrackResult = ""
-            for file in selectedIndexes:
+            for index in range(0, len(selectedIndexes), 5):
+                file = selectedIndexes[index]
                 fileName = self.mainModel.itemData(file)[0]
                 filePath = str(self.currentDir) + '/' + str(fileName)
                 if not (isdir(filePath) or isfile(filePath)):
