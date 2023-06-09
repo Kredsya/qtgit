@@ -22,6 +22,11 @@ class GitClone(QWidget):
         self.vbox = QVBoxLayout()
         self.setLayout(self.vbox)
 
+        self.label = QLabel(
+            "Only an HTTPS URL is supported. An SSH URL is not supported."
+        )
+        self.vbox.addWidget(self.label)
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
