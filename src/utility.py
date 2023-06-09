@@ -29,6 +29,22 @@ def parse_git_status(status):
     stages['untracked'] = stages.pop('Untracked files:')
     return stages
 
+def parse_staged_files(status):
+    statusResult = status.split('\n')
+    stagedFiles = []
+    flag = False
+    for line in statusResult:
+        line = line.strip()
+        if line.startswith("(use"):
+            flag = True
+            continue
+        elif flag and line == '':
+            break
+        
+        if flag:
+            stagedFiles.append(line)
+    return stagedFiles
+
 def is_gitrepo(dir):
     if not os.path.exists(dir):
         return False

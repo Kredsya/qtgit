@@ -126,7 +126,12 @@ class gitAction(refreshAction):
         path = self.mainModel.filePath(self.mainExplorer.currentIndex())  # QFileSystemModel의 현재 디렉토리의 경로를 반환하는 함수
         path = path.rsplit('/', 1)[0]
         if is_gitrepo(path):
-            text, ok = QInputDialog.getText(self, 'Commit Message', 'Enter commit message')
+            statusResult = os.popen("git status").read()
+            stagedFiles = parse_staged_files(statusResult)
+            msg = "- Changes to be committed\n"
+            for file in stagedFiles:
+                msg += file + '\n'
+            text, ok = QInputDialog.getText(self, 'Commit Message', msg+'\nEnter commit message')
             if ok:
                 os.system('git commit -m "' + text + '"')
                 QMessageBox.information(self, "Result", "Commit is done", QMessageBox.Ok)
