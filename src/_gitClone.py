@@ -27,6 +27,12 @@ class GitClone(QWidget):
         )
         self.vbox.addWidget(self.label)
 
+        self.label = QLabel("Provide the web URL")
+        self.vbox.addWidget(self.label)
+
+        self.textEdit = QTextEdit()
+        self.vbox.addWidget(self.textEdit)
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
