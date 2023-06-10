@@ -67,20 +67,7 @@ class App(QMainWindow, appUI, gitAction, branchAction, createMenu, eventControll
         selectedCount = len(self.mainExplorer.selectionModel().selectedIndexes()) #선택된 파일 개수를 가져옴 #QListView, QTableView의 선택된 파일 개수를 가져옴
         if selectedCount > 0:     #선택된 파일이 있으면
             status += " | " + str(selectedCount) + " elements selected" #선택된 파일 개수를 상태에 추가
-        
         self.statusBar().showMessage(status) #하단바의 상태를 업데이트 #상태바에 상태를 출력
-    
-    def refresh(self, event):#새로고침 이벤트 처리
-        print("refresh")
-        self.mainModel.setRootPath(self.currentDir)
-        self.mainExplorer.setRootIndex(self.mainModel.setRootPath(self.currentDir))
-        path = self.mainModel.setRootPath(self.currentDir)
-        if self.is_gitrepo(self.currentDir):
-            os.chdir(self.currentDir)
-            statuses_str = os.popen("git status").read()
-            git_statuses = parse_git_status(statuses_str)
-            self.git_status_column_update(self.currentDir, git_statuses)
-        self.navigate(path)
 
 if __name__ == '__main__': #프로그램 실행시 실행되는 부분
     app = QApplication(sys.argv) #QApplication생성

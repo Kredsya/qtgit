@@ -1,5 +1,5 @@
 import os
-from _gitAction import parse_git_status
+from _gitAction import parse_git_status, is_gitrepo
 
 class navigator():
     def navigate(self, index): #QListView클래스의 setRootIndex함수 이용.
@@ -12,7 +12,7 @@ class navigator():
         self.currentDir = os.path.dirname(self.currentDir) #현재 디렉토리의 상위 디렉토리를 설정
         self.navigate(self.mainModel.setRootPath(self.currentDir)) #QListView의 디렉토리를 설정
         path = self.mainModel.setRootPath(self.currentDir)
-        if self.is_gitrepo(self.currentDir):
+        if is_gitrepo(self.currentDir):
             os.chdir(self.currentDir)
             statuses_str = os.popen("git status").read()
             git_statuses = parse_git_status(statuses_str)
