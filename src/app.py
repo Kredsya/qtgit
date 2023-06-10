@@ -6,13 +6,14 @@ from PyQt5.QtWidgets import QApplication, QAbstractItemView, QLineEdit, QTableVi
 from PyQt5.QtGui import QIcon, QCursor
 from PyQt5.QtCore import Qt, QDir, QSize
 import sys
-from _gitAction import gitAction
+from _gitAction import gitAction, parse_git_status
+from _branchAction import branchAction
 from _appUI import appUI
 from _createMenu import createMenu
 from _eventController import eventController
 from _fileChanger import fileChanger
 
-class App(QMainWindow, appUI, gitAction, createMenu, eventController, fileChanger):  # main application window를 위한 클래스
+class App(QMainWindow, appUI, gitAction, branchAction, createMenu, eventController, fileChanger):  # main application window를 위한 클래스
     def __init__(self, initialDir): 
         super().__init__()
         # Variables
