@@ -38,6 +38,9 @@ class GitCredential(QWidget):
         self.textEdit = QTextEdit()
         self.vbox.addWidget(self.textEdit)
 
+        self.button = QPushButton("Save")
+        self.vbox.addWidget(self.button)
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
