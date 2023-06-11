@@ -33,6 +33,9 @@ class GitClone(QWidget):
         self.textEdit = QTextEdit()
         self.vbox.addWidget(self.textEdit)
 
+        self.checkbox = QCheckBox("Is this repository private?")
+        self.vbox.addWidget(self.checkbox)
+
         self.button = QPushButton("Clone")
         self.vbox.addWidget(self.button)
 
