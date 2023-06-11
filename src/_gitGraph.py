@@ -9,6 +9,8 @@ from bs4 import BeautifulSoup
 def extract_changed_file(input_str):
     pattern = re.compile(r'diff --git a/(.*?) b/')
     matches = pattern.findall(input_str)
+    if '(.*?)' in matches:
+        matches.remove('(.*?)')
     return matches
 def remove_html_css(content):
     soup = BeautifulSoup(content, "html.parser")
