@@ -171,9 +171,3 @@ class GitLogViewer(QWidget):
             self.textEdit3.setPlainText(details)
         else:
             self.textEdit3.setPlainText(self.FileChanged[log])
-
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-    ex = GitLogViewer()
-    ex.show()
-    sys.exit(app.exec_())

@@ -95,12 +95,18 @@ class createMenu(fileAction):
         gitCommitAction.setStatusTip('Confirm about staged files and Execute <git commit -m [message]> command')
         gitCommitAction.triggered.connect(self.GitCommit)
 
+        gitGraphAction = QAction('&Log Graph', self)
+        gitGraphAction.setStatusTip('Confirm about staged files and Execute <git commit -m [message]> command')
+        gitGraphAction.triggered.connect(self.GitLogGraph)
+
         gitMenu.addAction(gitInitAction)  # gitMenu(menuBar.addMenu("&Git"))에 Qaction추가
         gitMenu.addAction(gitAddAction)
         gitMenu.addAction(gitRestoreAction)
         gitMenu.addAction(gitRmDeleteAction)
         gitMenu.addAction(gitRmUntrackAction)
         gitMenu.addAction(gitCommitAction)
+        gitMenu.addSeparator()
+        gitMenu.addAction(gitGraphAction)
 
         # Branch
         branchCreateAction = QAction('&Create', self)
