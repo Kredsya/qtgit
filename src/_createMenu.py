@@ -10,6 +10,7 @@ class createMenu(fileAction):
         editMenu = menuBar.addMenu("&Edit")
         viewMenu = menuBar.addMenu("&View")
         gitMenu = menuBar.addMenu("&Git")
+        branchMenu = menuBar.addMenu("&Branch")
 
         # File
         # New Exit는 해당 QAction이 trigger되었을때 connect되는 것이 없어서 해당 매뉴를 클릭해도 동작하지 않는 것으로 보임
@@ -94,9 +95,37 @@ class createMenu(fileAction):
         gitCommitAction.setStatusTip('Confirm about staged files and Execute <git commit -m [message]> command')
         gitCommitAction.triggered.connect(self.GitCommit)
 
+        gitGraphAction = QAction('&Log Graph', self)
+        gitGraphAction.setStatusTip('Confirm about staged files and Execute <git commit -m [message]> command')
+        gitGraphAction.triggered.connect(self.GitLogGraph)
+
         gitMenu.addAction(gitInitAction)  # gitMenu(menuBar.addMenu("&Git"))에 Qaction추가
         gitMenu.addAction(gitAddAction)
         gitMenu.addAction(gitRestoreAction)
         gitMenu.addAction(gitRmDeleteAction)
         gitMenu.addAction(gitRmUntrackAction)
         gitMenu.addAction(gitCommitAction)
+        gitMenu.addSeparator()
+        gitMenu.addAction(gitGraphAction)
+
+        # Branch
+        branchCreateAction = QAction('&Create', self)
+        branchCreateAction.setStatusTip('Tip')
+        branchCreateAction.triggered.connect(self.BranchCreate)
+
+        branchDeleteAction = QAction('&Delete', self)
+        branchDeleteAction.setStatusTip('Tip')
+        branchDeleteAction.triggered.connect(self.BranchDelete)
+
+        branchRenameAction = QAction('&Rename', self)
+        branchRenameAction.setStatusTip('Tip')
+        branchRenameAction.triggered.connect(self.BranchRename)
+
+        branchCheckoutAction = QAction('&Checkout', self)
+        branchCheckoutAction.setStatusTip('Tip')
+        branchCheckoutAction.triggered.connect(self.BranchCheckout)
+
+        branchMenu.addAction(branchCreateAction)
+        branchMenu.addAction(branchDeleteAction)
+        branchMenu.addAction(branchRenameAction)
+        branchMenu.addAction(branchCheckoutAction)

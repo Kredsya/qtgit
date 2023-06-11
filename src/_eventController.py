@@ -2,7 +2,7 @@ from os.path import isfile, isdir
 import subprocess, os, platform
 from PyQt5.QtWidgets import QMenu
 from PyQt5.QtGui import QCursor
-from _gitAction import parse_git_status
+from _gitAction import parse_git_status, is_gitrepo
 from PyQt5.QtCore import Qt
 
 class eventController():
@@ -12,7 +12,7 @@ class eventController():
         print(f"onDoubleClick : {itemPath_str}")
         if isdir(itemPath): #더블클릭한 파일이 폴더일 경우
             self.navigate(event) #navigate함수 호출 #폴더를 열어줌
-            if self.is_gitrepo(itemPath_str):
+            if is_gitrepo(itemPath_str):
                 os.chdir(itemPath_str)
                 statuses_str = os.popen("git status").read()
                 git_statuses = parse_git_status(statuses_str)
