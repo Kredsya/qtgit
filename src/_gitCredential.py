@@ -6,6 +6,7 @@ from PyQt5.QtWidgets import (
     QTextEdit,
     QLabel,
     QPushButton,
+    QMessageBox,
 )
 
 
@@ -29,17 +30,29 @@ class GitCredential(QWidget):
         self.label = QLabel("GitHub username")
         self.vbox.addWidget(self.label)
 
-        self.textEdit = QTextEdit()
-        self.vbox.addWidget(self.textEdit)
+        self.textEdit_github_username = QTextEdit()
+        self.vbox.addWidget(self.textEdit_github_username)
 
         self.label = QLabel("Personal access token")
         self.vbox.addWidget(self.label)
 
-        self.textEdit = QTextEdit()
-        self.vbox.addWidget(self.textEdit)
+        self.textEdit_personal_access_token = QTextEdit()
+        self.vbox.addWidget(self.textEdit_personal_access_token)
 
-        self.button = QPushButton("Save")
+        self.button = QPushButton("Save", self)
         self.vbox.addWidget(self.button)
+        self.button.clicked.connect(self.save_git_credential)
+        self.setCentralWidget(self.button)
+
+    def save_git_credential(self):
+        file_path = "C:/QtGit/git_credential.txt"
+        try:
+            with open(file_path, "w") as file:
+                file.write(self.textEdit_github_username.toPlainText() + "\n")
+                file.write(self.textEdit_personal_access_token.toPlainText() + "\n")
+            QMessageBox.information(self, "Save Git Credential", "Saved successfully!")
+        except IOError:
+            QMessageBox.warning(self, "Save Git Credential", "Cannot write to file.")
 
 
 if __name__ == "__main__":
