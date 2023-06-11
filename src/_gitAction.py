@@ -1,8 +1,10 @@
 from utility import *
 from os.path import isfile, isdir
 import os
-from PyQt5.QtWidgets import QMessageBox, QInputDialog
+from PyQt5.QtWidgets import QMessageBox, QInputDialog, QApplication
 from _refreshAction import refreshAction
+from _gitGraph import GitLogViewer
+import sys
 
 class gitAction(refreshAction):
     def GitInit(self):  # 상단바의 Git의 Init을 클릭 시 - git init을 실행하는 메소드(현재 디렉토리에 .git이 없는 디렉토리에서만 git init 실행) - .git이 있을 경우 경고 창
@@ -138,6 +140,17 @@ class gitAction(refreshAction):
             else:
                 QMessageBox.warning(self, "Warning", "Error : unvalid commit message", QMessageBox.Ok)
             self.refresh()
+        else:
+            print("git init을 먼저 하세요.")
+            QMessageBox.warning(self, "Warning", "git init을 먼저 하세요.", QMessageBox.Ok)
+
+    def GitLogGraph(self):
+        path = self.mainModel.filePath(self.mainExplorer.currentIndex())
+        path = path.rsplit('/', 1)[0]
+        if is_gitrepo(path):
+            #_gitGraph.py 사용
+            self.gitLogViewer = GitLogViewer()  # self에 참조를 저장하여 객체가 사라지지 않게 합니다.
+            self.gitLogViewer.show()
         else:
             print("git init을 먼저 하세요.")
             QMessageBox.warning(self, "Warning", "git init을 먼저 하세요.", QMessageBox.Ok)
