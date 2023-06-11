@@ -70,7 +70,7 @@ class GitLogViewer(QWidget):
         self.load_git_log()
 
     def load_git_log(self):
-        output = subprocess.check_output(['git', 'log', '--all', '--decorate', '--color', '--oneline', '--graph'],
+        output = subprocess.check_output(['git', 'log', '--all', '--decorate', '--color', '--oneline', '--graph', '--date-order'],
                                          encoding='utf8')
         logs = output.split('\n')
 
