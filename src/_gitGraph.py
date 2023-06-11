@@ -141,8 +141,7 @@ class GitLogViewer(QWidget):
 
                 # git show 명령어 실행
                 command = 'git show --pretty=format: ' + commit_hash + ' -- ' + file
-                print(command)
-                result = subprocess.run(command, capture_output=True, text=True, shell=True)
+                result = subprocess.run(command, capture_output=True, text=True, shell=True, encoding='utf8')
                 gitdiff = result.stdout
                 #gitdiff의 앞두줄 자르기
                 gitdiff = gitdiff.split('\n')
