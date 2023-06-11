@@ -1,5 +1,5 @@
 import sys
-from PyQt5.QtWidgets import QWidget, QApplication, QVBoxLayout, QListWidget, QTextEdit, QLabel, QListWidgetItem
+from PyQt5.QtWidgets import QWidget, QApplication, QVBoxLayout ,QHBoxLayout , QListWidget, QTextEdit, QLabel, QListWidgetItem
 import re
 import subprocess
 from PyQt5.QtGui import QFont
@@ -57,19 +57,29 @@ class GitLogViewer(QWidget):
 
         self.textEdit2 = QTextEdit()
         self.textEdit2.setReadOnly(True)
+
+        self.listWidget2 = QListWidget()
+        self.listWidget2.setFont(QFont('Courier New', 10))
         self.textEdit3 = QTextEdit()
-        self.textEdit3.setReadOnly(True)
+
+        self.hbox = QHBoxLayout()
+        self.hbox.addWidget(self.listWidget2)
+        self.hbox.addWidget(self.textEdit3)
 
         self.vbox.addWidget(self.listWidget)
         self.vbox.addWidget(self.textEdit1)
         self.vbox.addWidget(self.textEdit2)
-        self.vbox.addWidget(self.textEdit3)
+        self.vbox.addLayout(self.hbox)
 
         # 높이 비율 설정
-        self.vbox.setStretch(0, 100)
+        self.vbox.setStretch(0, 40)
         self.vbox.setStretch(1, 1)
         self.vbox.setStretch(2, 1)
-        self.vbox.setStretch(3, 100)
+        self.vbox.setStretch(3, 58)
+
+        # 너비 비율 설정
+        self.hbox.setStretch(0, 1)
+        self.hbox.setStretch(1, 5)
 
         self.load_git_log()
 
