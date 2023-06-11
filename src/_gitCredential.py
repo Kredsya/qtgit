@@ -21,6 +21,11 @@ class GitCredential(QWidget):
         self.vbox = QVBoxLayout()
         self.setLayout(self.vbox)
 
+        self.label = QLabel(
+            "Provide the GitHub username and personal access token in order to access private repositories."
+        )
+        self.vbox.addWidget(self.label)
+
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
