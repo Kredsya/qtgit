@@ -37,6 +37,12 @@ class ClickableQLabel(QLabel):
 
     def mouseReleaseEvent(self, QMouseEvent):
         self.parent().parent().parent().on_itemClicked(remove_html_css(self.text()))
+class FileNameQLabel(QLabel):
+    def __init__(self, text=None, parent=None):
+        QLabel.__init__(self, text, parent)
+
+    def mouseReleaseEvent(self, QMouseEvent):
+        self.parent().parent().parent().on_itemClicked(self.text(), False)
 class GitLogViewer(QWidget):
     def __init__(self):
         super().__init__()
