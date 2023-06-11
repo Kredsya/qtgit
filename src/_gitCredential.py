@@ -42,7 +42,6 @@ class GitCredential(QWidget):
         self.button = QPushButton("Save", self)
         self.vbox.addWidget(self.button)
         self.button.clicked.connect(self.save_git_credential)
-        self.setCentralWidget(self.button)
 
     def save_git_credential(self):
         file_path = "C:/QtGit/git_credential.txt"
