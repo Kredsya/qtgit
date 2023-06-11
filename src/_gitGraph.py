@@ -39,7 +39,7 @@ class GitLogViewer(QWidget):
         self.initUI()
 
     def initUI(self):
-        self.setGeometry(300, 300, 1400, 1000)
+        self.setGeometry(100, 100, 1800, 1000)
         self.setWindowTitle('Git Log')
 
         self.vbox = QVBoxLayout()
