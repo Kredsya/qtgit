@@ -45,6 +45,12 @@ def parse_staged_files(status):
             stagedFiles.append(line)
     return stagedFiles
 
+def parse_git_branch(status):
+    if status == "":
+        return ""
+    statusResult = (status.split('\n')[0]).split()[-1]
+    return " (" + statusResult + ")"
+
 def is_gitrepo(dir):
     if not os.path.exists(dir):
         return False
