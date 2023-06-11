@@ -6,6 +6,10 @@ from PyQt5.QtGui import QFont
 from PyQt5.QtCore import QSize, Qt
 from ansi2html import Ansi2HTMLConverter
 from bs4 import BeautifulSoup
+def extract_changed_file(input_str):
+    pattern = re.compile(r'diff --git a/(.*?) b/')
+    matches = pattern.findall(input_str)
+    return matches
 def remove_html_css(content):
     soup = BeautifulSoup(content, "html.parser")
 
