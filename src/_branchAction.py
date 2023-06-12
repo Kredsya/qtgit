@@ -10,12 +10,15 @@ class branchAction():
         if is_gitrepo(path):
             branch, ok = QInputDialog.getText(self, 'Create Branch', 'Enter the branch name to create')
             if ok:
-                statusResult = os.popen("git branch " + branch).read()
-                print(statusResult)
+                try:
+                    statusResult = subprocess.check_output(['git', 'branch', branch], shell=True, stderr=subprocess.STDOUT).decode('utf-8').split('\n')[0]
+                except Exception as e:
+                    statusResult = e.output.decode()
+                print(f"statusResult = {statusResult}")
                 if "already exists" in statusResult:
                     QMessageBox.warning(self, "Warning", statusResult, QMessageBox.Ok)
                 else:
-                    QMessageBox.information(self, "Result", branch + " branch is created", QMessageBox.Ok)
+                    QMessageBox.information(self, "Result", f"{branch} branch is created", QMessageBox.Ok)
             else:
                 QMessageBox.warning(self, "Warning", "Error : unvalid branch name", QMessageBox.Ok)
         else:
@@ -34,13 +37,16 @@ class branchAction():
                 branch_list[i] = branch_list[i].lstrip().split()[-1]
             branch, ok = QInputDialog.getItem(self, 'Delete Branch', 'What branch do you want to delete?', branch_list)
             if ok:
-                statusResult = os.popen("git branch -D " + branch).read()
+                try:
+                    statusResult = subprocess.check_output(['git', 'branch', '-D', branch], shell=True, stderr=subprocess.STDOUT).decode('utf-8').split('\n')[0]
+                except Exception as e:
+                    statusResult = e.output.decode()
                 statusResultFirstWord = statusResult.split()[0]
                 print(statusResult)
                 if statusResultFirstWord != "Deleted":
                     QMessageBox.warning(self, "Warning", statusResult, QMessageBox.Ok)
                 else:
-                    QMessageBox.information(self, "Result", branch + " branch is deleted", QMessageBox.Ok)
+                    QMessageBox.information(self, "Result", f"{branch} branch is deleted", QMessageBox.Ok)
             else:
                 QMessageBox.warning(self, "Warning", "Error : unvalid branch name", QMessageBox.Ok)
         else:
@@ -58,14 +64,17 @@ class branchAction():
                     branch_list[i].replace('*', '')
                 branch_list[i] = branch_list[i].lstrip().split()[-1]
             old_branch, ok1 = QInputDialog.getItem(self, 'Rename Branch', 'What branch do you want to rename?', branch_list)
-            new_branch, ok2 = QInputDialog.getText(self, 'Rename Branch', old_branch + " to what name? Enter the new branch name")
+            new_branch, ok2 = QInputDialog.getText(self, 'Rename Branch', f"{old_branch} to what name? Enter the new branch name")
             if ok1 and ok2:
-                statusResult = os.popen("git branch -m " + old_branch + " " + new_branch).read()
+                try:
+                    statusResult = subprocess.check_output(['git', 'branch', '-m', old_branch, new_branch], shell=True, stderr=subprocess.STDOUT).decode('utf-8').split('\n')[0]
+                except Exception as e:
+                    statusResult = e.output.decode()
                 print(statusResult)
                 if statusResult != "":
                     QMessageBox.warning(self, "Warning", statusResult, QMessageBox.Ok)
                 else:
-                    QMessageBox.information(self, "Result", old_branch + " branch is renamed as " + "new_branch", QMessageBox.Ok)
+                    QMessageBox.information(self, "Result", f"{old_branch} branch is renamed as {new_branch}", QMessageBox.Ok)
             else:
                 QMessageBox.warning(self, "Warning", "Error : unvalid branch name", QMessageBox.Ok)
         else:
@@ -84,13 +93,16 @@ class branchAction():
                 branch_list[i] = branch_list[i].lstrip().split()[-1]
             branch, ok = QInputDialog.getItem(self, 'Checkout Branch', 'What branch do you want to checkout?', branch_list)
             if ok:
-                statusResult = os.popen("git checkout " + branch).read()
+                try:
+                    statusResult = subprocess.check_output(['git', 'checkout', branch], shell=True, stderr=subprocess.STDOUT).decode('utf-8').split('\n')[0]
+                except Exception as e:
+                    statusResult = e.output.decode()
                 statusResultFirstWord = statusResult.split()[0]
                 print(statusResult)
                 if statusResultFirstWord != "Switched":
                     QMessageBox.warning(self, "Warning", statusResult, QMessageBox.Ok)
                 else:
-                    QMessageBox.information(self, "Result", "Switched to branch " + branch, QMessageBox.Ok)
+                    QMessageBox.information(self, "Result", f"Switched to branch {branch}", QMessageBox.Ok)
             else:
                 QMessageBox.warning(self, "Warning", "Error : unvalid branch name", QMessageBox.Ok)
         else:
