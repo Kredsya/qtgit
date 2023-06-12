@@ -45,11 +45,11 @@ class GitClone(QWidget):
         self.button.clicked.connect(self.exec_git_clone)
 
     def exec_git_clone(self):
-        if self.checkbox.isChecked():
-            file_path = "C:/QtGit/git_credential.txt"
-            web_url = self.textEdit.toPlainText()
-            home_directory = os.path.expanduser("~")
+        file_path = "C:/QtGit/git_credential.txt"
+        web_url = self.textEdit.toPlainText()
+        home_directory = os.path.expanduser("~")
 
+        if self.checkbox.isChecked():
             try:
                 with open(file_path, "r") as file:
                     lines = file.readlines()
@@ -95,10 +95,3 @@ class GitClone(QWidget):
                     "Execute Git Clone",
                     "Git clone failed. The credential is incorrect or the repository has already been cloned.",
                 )
-
-
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    ex = GitClone()
-    ex.show()
-    sys.exit(app.exec_())
