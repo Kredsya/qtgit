@@ -54,7 +54,7 @@ python src/app.py
 
 ## Documentation
 
-Refer *documentation.md*.
+Refer [documentation.md](documentation.md) for more information.
 
 ## License
 
