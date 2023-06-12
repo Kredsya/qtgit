@@ -30,7 +30,7 @@ class branchAction(refreshAction):
         path = self.mainModel.filePath(self.mainExplorer.currentIndex())
         path = path.rsplit('/', 1)[0]
         if is_gitrepo(path):
-            branch_list = subprocess.check_output(['git', 'branch', '-a']).decode('utf-8').split('\n')
+            branch_list = subprocess.check_output(['git', 'branch', '-l']).decode('utf-8').split('\n')
             branch_list.remove('')
             for i in range(len(branch_list)):
                 if branch_list[i][0] == '*':
@@ -58,7 +58,7 @@ class branchAction(refreshAction):
         path = self.mainModel.filePath(self.mainExplorer.currentIndex())
         path = path.rsplit('/', 1)[0]
         if is_gitrepo(path):
-            branch_list = subprocess.check_output(['git', 'branch', '-a']).decode('utf-8').split('\n')
+            branch_list = subprocess.check_output(['git', 'branch', '-l']).decode('utf-8').split('\n')
             branch_list.remove('')
             for i in range(len(branch_list)):
                 if branch_list[i][0] == '*':
@@ -86,7 +86,7 @@ class branchAction(refreshAction):
         path = self.mainModel.filePath(self.mainExplorer.currentIndex())
         path = path.rsplit('/', 1)[0]
         if is_gitrepo(path):
-            branch_list = subprocess.check_output(['git', 'branch', '-a']).decode('utf-8').split('\n')
+            branch_list = subprocess.check_output(['git', 'branch', '-l']).decode('utf-8').split('\n')
             branch_list.remove('')
             for i in range(len(branch_list)):
                 if branch_list[i][0] == '*':
