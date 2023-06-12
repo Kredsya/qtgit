@@ -13,7 +13,10 @@ class eventController():
         if isdir(itemPath): #더블클릭한 파일이 폴더일 경우
             if is_gitrepo(itemPath_str):
                 os.chdir(itemPath_str)
-                statuses_str = os.popen("git status").read()
+                try:
+                    statuses_str = subprocess.check_output(['git', 'status'], shell=True, stderr=subprocess.STDOUT).decode('utf-8')
+                except Exception as e:
+                    statuses_str = e.output.decode()
                 git_statuses = parse_git_status(statuses_str)
                 self.git_status_column_update(itemPath_str, git_statuses)
                 self.currentBranch = parse_git_current_branch(statuses_str)

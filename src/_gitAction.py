@@ -130,7 +130,10 @@ class gitAction(refreshAction):
         path = self.mainModel.filePath(self.mainExplorer.currentIndex())  # QFileSystemModel의 현재 디렉토리의 경로를 반환하는 함수
         path = path.rsplit('/', 1)[0]
         if is_gitrepo(path):
-            statusResult = os.popen("git status").read()
+            try:
+                statusResult = subprocess.check_output(['git', 'status'], shell=True, stderr=subprocess.STDOUT).decode('utf-8')
+            except Exception as e:
+                statusResult = e.output.decode()
             stagedFiles = parse_staged_files(statusResult)
             msg = "- Changes to be committed\n"
             for file in stagedFiles:

@@ -81,7 +81,10 @@ def is_gitrepo(dir):
         return False
     original_path = os.getcwd()
     os.chdir(dir)
-    result = os.popen("git status").read()
+    try:
+        result = subprocess.check_output(['git', 'status'], shell=True, stderr=subprocess.STDOUT).decode('utf-8')
+    except Exception as e:
+        result = e.output.decode()
     os.chdir(original_path)
 
     if "not a git" in result:
