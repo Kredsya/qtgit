@@ -110,22 +110,28 @@ class createMenu(fileAction):
 
         # Branch
         branchCreateAction = QAction('&Create', self)
-        branchCreateAction.setStatusTip('Tip')
+        branchCreateAction.setStatusTip('Execute <git branch [branch name]> command')
         branchCreateAction.triggered.connect(self.BranchCreate)
 
         branchDeleteAction = QAction('&Delete', self)
-        branchDeleteAction.setStatusTip('Tip')
+        branchDeleteAction.setStatusTip('Execute <git branch -D [branch name]> command')
         branchDeleteAction.triggered.connect(self.BranchDelete)
 
         branchRenameAction = QAction('&Rename', self)
-        branchRenameAction.setStatusTip('Tip')
+        branchRenameAction.setStatusTip('Execute <git branch -m [old branch name] [new branch name]> command')
         branchRenameAction.triggered.connect(self.BranchRename)
 
         branchCheckoutAction = QAction('&Checkout', self)
-        branchCheckoutAction.setStatusTip('Tip')
+        branchCheckoutAction.setStatusTip('Execute <git checkout [branch name]> command')
         branchCheckoutAction.triggered.connect(self.BranchCheckout)
+
+        branchMergeAction = QAction('&Merge', self)
+        branchMergeAction.setStatusTip('Execute <git merge [target branch]> command')
+        branchMergeAction.triggered.connect(self.BranchMerge)
 
         branchMenu.addAction(branchCreateAction)
         branchMenu.addAction(branchDeleteAction)
         branchMenu.addAction(branchRenameAction)
         branchMenu.addAction(branchCheckoutAction)
+        branchMenu.addSeparator()
+        branchMenu.addAction(branchMergeAction)
