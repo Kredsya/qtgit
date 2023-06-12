@@ -4,6 +4,8 @@ import os
 from PyQt5.QtWidgets import QMessageBox, QInputDialog, QApplication
 from _refreshAction import refreshAction
 from _gitGraph import GitLogViewer
+from _gitClone import GitClone
+from _gitCredential import GitCredential
 import sys
 
 class gitAction(refreshAction):
@@ -156,7 +158,9 @@ class gitAction(refreshAction):
             QMessageBox.warning(self, "Warning", "git init을 먼저 하세요.", QMessageBox.Ok)
 
     def GitCredentialSaver(self):
-        print(1)
+        self.gitCredentialWindow = GitCredential()
+        self.gitCredentialWindow.show()
 
     def GitCloner(self):
-        print(2)
+        self.gitCloneWindow = GitClone()
+        self.gitCloneWindow.show()
