@@ -73,4 +73,26 @@ class branchAction():
             QMessageBox.warning(self, "Warning", "git init을 먼저 하세요.", QMessageBox.Ok)
     
     def BranchCheckout(self):
-        print("tmp")
+        path = self.mainModel.filePath(self.mainExplorer.currentIndex())
+        path = path.rsplit('/', 1)[0]
+        if is_gitrepo(path):
+            branch_list = subprocess.check_output(['git', 'branch', '-a']).decode('utf-8').split('\n')
+            branch_list.remove('')
+            for i in range(len(branch_list)):
+                if branch_list[i][0] == '*':
+                    branch_list[i].replace('*', '')
+                branch_list[i] = branch_list[i].lstrip().split()[-1]
+            branch, ok = QInputDialog.getItem(self, 'Checkout Branch', 'What branch do you want to checkout?', branch_list)
+            if ok:
+                statusResult = os.popen("git checkout " + branch).read()
+                statusResultFirstWord = statusResult.split()[0]
+                print(statusResult)
+                if statusResultFirstWord != "Switched":
+                    QMessageBox.warning(self, "Warning", statusResult, QMessageBox.Ok)
+                else:
+                    QMessageBox.information(self, "Result", "Switched to branch " + branch, QMessageBox.Ok)
+            else:
+                QMessageBox.warning(self, "Warning", "Error : unvalid branch name", QMessageBox.Ok)
+        else:
+            print("git init을 먼저 하세요.")
+            QMessageBox.warning(self, "Warning", "git init을 먼저 하세요.", QMessageBox.Ok)
