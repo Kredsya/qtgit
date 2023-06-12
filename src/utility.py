@@ -51,6 +51,22 @@ def parse_git_current_branch(status):
     statusResult = (status.split('\n')[0]).split()[-1]
     return statusResult
 
+def parse_unmerged_paths(status):
+    statusResult = status.split('\n')
+    unmergedPaths = []
+    flag = False
+    for line in statusResult:
+        line = line.strip()
+        if line.startswith("(use"):
+            flag = True
+            continue
+        elif flag and line == '':
+            break
+
+        if flag:
+            unmergedPaths.append(line)
+    return unmergedPaths
+
 def make_branch_list():
     ret_list = subprocess.check_output(['git', 'branch', '-l']).decode('utf-8').split('\n')
     ret_list.remove('')

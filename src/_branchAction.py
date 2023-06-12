@@ -2,7 +2,7 @@ import os
 import subprocess
 from PyQt5.QtWidgets import QInputDialog, QMessageBox
 from _refreshAction import refreshAction
-from utility import is_gitrepo, make_branch_list
+from utility import is_gitrepo, make_branch_list, parse_unmerged_paths
 
 class branchAction(refreshAction):
     def BranchCreate(self):
@@ -105,11 +105,24 @@ class branchAction(refreshAction):
             branch_list.remove(self.currentBranch)
             branch, ok = QInputDialog.getItem(self, 'Merge Branch', f'Select target branch\nbase:{self.currentBranch} <- compare:target_branch', branch_list)
             if ok:
+                errorFlag = False
                 try:
                     statusResult = subprocess.check_output(['git', 'merge', branch], shell=True, stderr=subprocess.STDOUT).decode('utf-8').split('\n')[0]
                 except Exception as e:
                     statusResult = e.output.decode()
-                print(f'===statusResult = {statusResult}===')
+                    errorFlag = True
+                if "CONFLICT" in statusResult:
+                    statusResult = os.popen("git status").read()
+                    unmergedPaths = parse_unmerged_paths(statusResult)
+                    unmergedPathsStr = ""
+                    for path in unmergedPaths:
+                        unmergedPathsStr += path + '\n'
+                    QMessageBox.warning(self, "Warning", unmergedPathsStr + "\nMerge conflict.", QMessageBox.Ok)
+                    subprocess.run(['git', 'merge', '--abort'], shell=True)
+                elif errorFlag:
+                    QMessageBox.warning(self, "Warning", "Unexpected error while merging.", QMessageBox.Ok)
+                else:
+                    QMessageBox.information(self, "Result", f"base:{self.currentBranch} <- compare:{branch}\nSuccessfully merged.", QMessageBox.Ok)
         else:
             print("git init을 먼저 하세요.")
             QMessageBox.warning(self, "Warning", "git init을 먼저 하세요.", QMessageBox.Ok)
