@@ -122,6 +122,7 @@ class GitLogViewer(QWidget):
                 commit_hash.remove('')
             if len(commit_hash) == 0:
                 self.textEdit1.setPlainText("커밋오브젝트가 아닙니다.")
+                self.listWidget2.clear()
                 self.textEdit2.setPlainText("")
                 self.textEdit3.setPlainText("")
                 return

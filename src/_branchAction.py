@@ -7,16 +7,16 @@ from utility import is_gitrepo, make_branch_list, parse_unmerged_paths
 class branchAction(refreshAction):
     def BranchCreate(self):
         path = self.mainModel.rootPath()
-        print(f'===path = {path}')
         if is_gitrepo(path):
+            old_branch_list = make_branch_list()
             branch, ok = QInputDialog.getText(self, 'Create Branch', 'Enter the branch name to create')
             if ok:
                 try:
                     statusResult = subprocess.check_output(['git', 'branch', branch], shell=True, stderr=subprocess.STDOUT).decode('utf-8').split('\n')[0]
                 except Exception as e:
                     statusResult = e.output.decode()
-                print(f"statusResult = {statusResult}")
-                if "already exists" in statusResult:
+                new_branch_list = make_branch_list()
+                if old_branch_list == new_branch_list:
                     QMessageBox.warning(self, "Warning", statusResult, QMessageBox.Ok)
                 else:
                     QMessageBox.information(self, "Result", f"{branch} branch is created", QMessageBox.Ok)
@@ -36,9 +36,8 @@ class branchAction(refreshAction):
                     statusResult = subprocess.check_output(['git', 'branch', '-D', branch], shell=True, stderr=subprocess.STDOUT).decode('utf-8').split('\n')[0]
                 except Exception as e:
                     statusResult = e.output.decode()
-                statusResultFirstWord = statusResult.split()[0]
-                print(statusResult)
-                if statusResultFirstWord != "Deleted":
+                new_branch_list = make_branch_list()
+                if branch_list == new_branch_list:
                     QMessageBox.warning(self, "Warning", statusResult, QMessageBox.Ok)
                 else:
                     QMessageBox.information(self, "Result", f"{branch} branch is deleted", QMessageBox.Ok)
@@ -59,8 +58,8 @@ class branchAction(refreshAction):
                     statusResult = subprocess.check_output(['git', 'branch', '-m', old_branch, new_branch], shell=True, stderr=subprocess.STDOUT).decode('utf-8').split('\n')[0]
                 except Exception as e:
                     statusResult = e.output.decode()
-                print(statusResult)
-                if statusResult != "":
+                new_branch_list = make_branch_list()
+                if branch_list == new_branch_list:
                     QMessageBox.warning(self, "Warning", statusResult, QMessageBox.Ok)
                 else:
                     QMessageBox.information(self, "Result", f"{old_branch} branch is renamed as {new_branch}", QMessageBox.Ok)
@@ -76,13 +75,13 @@ class branchAction(refreshAction):
             branch_list = make_branch_list()
             branch, ok = QInputDialog.getItem(self, 'Checkout Branch', 'What branch do you want to checkout?', branch_list)
             if ok:
+                errorFlag = False
                 try:
                     statusResult = subprocess.check_output(['git', 'checkout', branch], shell=True, stderr=subprocess.STDOUT).decode('utf-8').split('\n')[0]
                 except Exception as e:
                     statusResult = e.output.decode()
-                statusResultFirstWord = statusResult.split()[0]
-                print(statusResult)
-                if statusResultFirstWord != "Switched":
+                    errorFlag = True
+                if errorFlag:
                     QMessageBox.warning(self, "Warning", statusResult, QMessageBox.Ok)
                 else:
                     QMessageBox.information(self, "Result", f"Switched to branch {branch}", QMessageBox.Ok)
@@ -119,7 +118,7 @@ class branchAction(refreshAction):
                     print(f'===unmergedPath = {unmergedPaths}===')
                     QMessageBox.warning(self, "Warning", unmergedPathsStr + "\nMerge conflict.", QMessageBox.Ok)
                     subprocess.run(['git', 'merge', '--abort'], shell=True)
-                elif errorFlag:
+                elif errorFlag or "fatal" in statusResult:
                     QMessageBox.warning(self, "Warning", "Unexpected error while merging.", QMessageBox.Ok)
                 else:
                     QMessageBox.information(self, "Result", f"base:{self.currentBranch} <- compare:{branch}\nSuccessfully merged.", QMessageBox.Ok)
