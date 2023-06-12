@@ -54,6 +54,7 @@ class GitCredential(QWidget):
                 file.write(self.textEdit_github_username.toPlainText() + "\n")
                 file.write(self.textEdit_personal_access_token.toPlainText() + "\n")
             QMessageBox.information(self, "Save Git Credential", "Saved successfully!")
+            self.close()
         except IOError:
             QMessageBox.warning(self, "Save Git Credential", "Cannot write to file.")
 
