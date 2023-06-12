@@ -99,14 +99,28 @@ class createMenu(fileAction):
         gitGraphAction.setStatusTip('Confirm about staged files and Execute <git commit -m [message]> command')
         gitGraphAction.triggered.connect(self.GitLogGraph)
 
+        gitCredentialAction = QAction('&Credential', self)
+        gitCredentialAction.setStatusTip('Set git credential')
+        gitCredentialAction.triggered.connect(self.GitCredentialSaver)
+
+        gitCloneAction = QAction('&Clone', self)
+        gitCloneAction.setStatusTip('Clone git repository')
+        gitCloneAction.triggered.connect(self.GitCloner)
+
         gitMenu.addAction(gitInitAction)  # gitMenu(menuBar.addMenu("&Git"))에 Qaction추가
+        gitMenu.addSeparator()
         gitMenu.addAction(gitAddAction)
         gitMenu.addAction(gitRestoreAction)
-        gitMenu.addAction(gitRmDeleteAction)
-        gitMenu.addAction(gitRmUntrackAction)
         gitMenu.addAction(gitCommitAction)
         gitMenu.addSeparator()
+        gitMenu.addAction(gitRmDeleteAction)
+        gitMenu.addAction(gitRmUntrackAction)
+        gitMenu.addSeparator()
         gitMenu.addAction(gitGraphAction)
+        gitMenu.addSeparator()
+        gitMenu.addAction(gitCredentialAction)
+        gitMenu.addAction(gitCloneAction)
+
 
         # Branch
         branchCreateAction = QAction('&Create', self)

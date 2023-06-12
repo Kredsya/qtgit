@@ -154,3 +154,9 @@ class gitAction(refreshAction):
         else:
             print("git init을 먼저 하세요.")
             QMessageBox.warning(self, "Warning", "git init을 먼저 하세요.", QMessageBox.Ok)
+
+    def GitCredentialSaver(self):
+        print(1)
+
+    def GitCloner(self):
+        print(2)
