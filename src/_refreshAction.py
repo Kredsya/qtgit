@@ -1,5 +1,5 @@
 import os
-from _gitAction import parse_git_status, is_gitrepo
+from utility import parse_git_status, is_gitrepo, parse_git_branch
 from _eventController import eventController
 
 class refreshAction(eventController):
@@ -13,4 +13,5 @@ class refreshAction(eventController):
             statuses_str = os.popen("git status").read()
             git_statuses = parse_git_status(statuses_str)
             self.git_status_column_update(self.currentDir, git_statuses)
+            self.currentBranch = parse_git_branch(statuses_str)
         self.navigate(path)

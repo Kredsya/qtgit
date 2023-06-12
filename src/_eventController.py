@@ -2,7 +2,7 @@ from os.path import isfile, isdir
 import subprocess, os, platform
 from PyQt5.QtWidgets import QMenu
 from PyQt5.QtGui import QCursor
-from _gitAction import parse_git_status, is_gitrepo
+from utility import parse_git_status, is_gitrepo, parse_git_branch
 from PyQt5.QtCore import Qt
 
 class eventController():
@@ -11,12 +11,13 @@ class eventController():
         itemPath_str = str(itemPath.absoluteFilePath())  # QFileInfo 객체로부터 절대 경로를 얻고 문자열로 변환
         print(f"onDoubleClick : {itemPath_str}")
         if isdir(itemPath): #더블클릭한 파일이 폴더일 경우
-            self.navigate(event) #navigate함수 호출 #폴더를 열어줌
             if is_gitrepo(itemPath_str):
                 os.chdir(itemPath_str)
                 statuses_str = os.popen("git status").read()
                 git_statuses = parse_git_status(statuses_str)
                 self.git_status_column_update(itemPath_str, git_statuses)
+                self.currentBranch = parse_git_branch(statuses_str)
+            self.navigate(event) #navigate함수 호출 #폴더를 열어줌
 
         elif isfile(itemPath): #더블클릭한 파일이 파일일 경우
             if platform.system() == 'Darwin':       # macOS
