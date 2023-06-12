@@ -28,10 +28,11 @@ class branchAction():
         if is_gitrepo(path):
             branch_list = subprocess.check_output(['git', 'branch', '-a']).decode('utf-8').split('\n')
             branch_list.remove('')
-            branch_list_str = ""
             for i in range(len(branch_list)):
-                branch_list_str += branch_list[i].lstrip() + '\n'
-            branch, ok = QInputDialog.getText(self, 'Delete Branch', branch_list_str + '\nEnter the branch name to delete')
+                if branch_list[i][0] == '*':
+                    branch_list[i].replace('*', '')
+                branch_list[i] = branch_list[i].lstrip().split()[-1]
+            branch, ok = QInputDialog.getItem(self, 'Delete Branch', 'What branch do you want to delete?', branch_list)
             if ok:
                 statusResult = os.popen("git branch -D " + branch).read()
                 statusResultFirstWord = statusResult.split()[0]
@@ -52,10 +53,11 @@ class branchAction():
         if is_gitrepo(path):
             branch_list = subprocess.check_output(['git', 'branch', '-a']).decode('utf-8').split('\n')
             branch_list.remove('')
-            branch_list_str = ""
             for i in range(len(branch_list)):
-                branch_list_str += branch_list[i].lstrip() + '\n'
-            old_branch, ok1 = QInputDialog.getText(self, 'Rename Branch', branch_list_str + '\nEnter the branch name to rename')
+                if branch_list[i][0] == '*':
+                    branch_list[i].replace('*', '')
+                branch_list[i] = branch_list[i].lstrip().split()[-1]
+            old_branch, ok1 = QInputDialog.getItem(self, 'Rename Branch', 'What branch do you want to rename?', branch_list)
             new_branch, ok2 = QInputDialog.getText(self, 'Rename Branch', old_branch + " to what name? Enter the new branch name")
             if ok1 and ok2:
                 statusResult = os.popen("git branch -m " + old_branch + " " + new_branch).read()
