@@ -1,9 +1,10 @@
 import os
 import subprocess
 from PyQt5.QtWidgets import QInputDialog, QMessageBox
+from _refreshAction import refreshAction
 from utility import is_gitrepo
 
-class branchAction():
+class branchAction(refreshAction):
     def BranchCreate(self):
         path = self.mainModel.filePath(self.mainExplorer.currentIndex())
         path = path.rsplit('/', 1)[0]
@@ -103,8 +104,12 @@ class branchAction():
                     QMessageBox.warning(self, "Warning", statusResult, QMessageBox.Ok)
                 else:
                     QMessageBox.information(self, "Result", f"Switched to branch {branch}", QMessageBox.Ok)
+                    self.refresh()
             else:
                 QMessageBox.warning(self, "Warning", "Error : unvalid branch name", QMessageBox.Ok)
         else:
             print("git init을 먼저 하세요.")
             QMessageBox.warning(self, "Warning", "git init을 먼저 하세요.", QMessageBox.Ok)
+    
+    def BranchMerge(self):
+        print()
