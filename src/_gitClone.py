@@ -1,3 +1,4 @@
+import os
 import sys
 from PyQt5.QtWidgets import (
     QWidget,
@@ -7,7 +8,9 @@ from PyQt5.QtWidgets import (
     QLabel,
     QPushButton,
     QCheckBox,
+    QMessageBox,
 )
+from _gitCredential import *
 
 
 class GitClone(QWidget):
@@ -36,8 +39,37 @@ class GitClone(QWidget):
         self.checkbox = QCheckBox("Is this repository private?")
         self.vbox.addWidget(self.checkbox)
 
-        self.button = QPushButton("Clone")
+        self.button = QPushButton("Clone", self)
         self.vbox.addWidget(self.button)
+        self.button.clicked.connect(self.exec_git_clone)
+
+    def exec_git_clone(self):
+        if self.checkbox.isChecked():
+            file_path = "C:/QtGit/git_credential.txt"
+            try:
+                with open(file_path, "r") as file:
+                    lines = file.readlines()
+                os.system(
+                    "git clone "
+                    + self.textEdit[0:8]
+                    + lines[0]
+                    + ":"
+                    + lines[1]
+                    + "@"
+                    + self.textEdit[8:]
+                )
+                QMessageBox.information(
+                    self, "Execute Git Clone", "Cloned successfully!"
+                )
+            except FileNotFoundError:
+                self.git_credential_window = GitCredential()
+                self.git_credential_window.show()
+                QMessageBox.warning(self, "Execute Git Clone", "Credential not found.")
+            except IOError:
+                QMessageBox.warning(self, "Execute Git Clone", "Cannot read file.")
+        else:
+            os.system("git clone " + self.textEdit)
+            QMessageBox.information(self, "Execute Git Clone", "Cloned successfully!")
 
 
 if __name__ == "__main__":
