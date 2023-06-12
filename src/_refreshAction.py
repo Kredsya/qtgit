@@ -17,4 +17,6 @@ class refreshAction(eventController):
             git_statuses = parse_git_status(statuses_str)
             self.git_status_column_update(self.currentDir, git_statuses)
             self.currentBranch = parse_git_current_branch(statuses_str)
+        else:
+            self.currentBranch = ""
         self.navigate(path)
