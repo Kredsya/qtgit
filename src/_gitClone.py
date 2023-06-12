@@ -1,4 +1,5 @@
 import os
+import subprocess
 import sys
 from PyQt5.QtWidgets import (
     QWidget,
@@ -26,7 +27,7 @@ class GitClone(QWidget):
         self.setLayout(self.vbox)
 
         self.label = QLabel(
-            "Only an HTTPS URL is supported. An SSH URL is not supported."
+            "This clones the repository in your home directory. Only a HTTPS URL is supported. A SSH URL is not supported."
         )
         self.vbox.addWidget(self.label)
 
@@ -46,21 +47,34 @@ class GitClone(QWidget):
     def exec_git_clone(self):
         if self.checkbox.isChecked():
             file_path = "C:/QtGit/git_credential.txt"
+            web_url = self.textEdit.toPlainText()
+            home_directory = os.path.expanduser("~")
+
             try:
                 with open(file_path, "r") as file:
                     lines = file.readlines()
-                os.system(
-                    "git clone "
-                    + self.textEdit[0:8]
-                    + lines[0]
-                    + ":"
-                    + lines[1]
-                    + "@"
-                    + self.textEdit[8:]
+
+                github_username = lines[0].strip()
+                personal_access_token = lines[1].strip()
+                web_url_with_credential = web_url.replace(
+                    "https://", f"https://{github_username}:{personal_access_token}@"
                 )
-                QMessageBox.information(
-                    self, "Execute Git Clone", "Cloned successfully!"
-                )
+
+                try:
+                    subprocess.run(
+                        ["git", "clone", web_url_with_credential],
+                        cwd=home_directory,
+                        check=True,
+                    )
+                    QMessageBox.information(
+                        self, "Execute Git Clone", "Cloned successfully!"
+                    )
+                except subprocess.CalledProcessError:
+                    QMessageBox.warning(
+                        self,
+                        "Execute Git Clone",
+                        "Git clone failed. The credential is incorrect or the repository has already been cloned.",
+                    )
             except FileNotFoundError:
                 self.git_credential_window = GitCredential()
                 self.git_credential_window.show()
@@ -68,8 +82,19 @@ class GitClone(QWidget):
             except IOError:
                 QMessageBox.warning(self, "Execute Git Clone", "Cannot read file.")
         else:
-            os.system("git clone " + self.textEdit)
-            QMessageBox.information(self, "Execute Git Clone", "Cloned successfully!")
+            try:
+                subprocess.run(
+                    ["git", "clone", web_url], cwd=home_directory, check=True
+                )
+                QMessageBox.information(
+                    self, "Execute Git Clone", "Cloned successfully!"
+                )
+            except subprocess.CalledProcessError:
+                QMessageBox.warning(
+                    self,
+                    "Execute Git Clone",
+                    "Git clone failed. The credential is incorrect or the repository has already been cloned.",
+                )
 
 
 if __name__ == "__main__":
