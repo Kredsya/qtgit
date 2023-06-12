@@ -4,6 +4,8 @@
 
 A simple GUI based git repository management file explorer written in Python using PyQt5. Inspired by [pyqtexplorer](https://github.com/adesfontaines/pyqtexplorer).
 
+We love using Git in CLI, but this is difficult for newcomers. So, we developed a program to use Git conveniently through GUI. We hope QtGit will be a good starting point for novices to understand how Git works.
+
 ## Features
 
 * File explorer
