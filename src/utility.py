@@ -1,4 +1,4 @@
-import os
+import os, subprocess
 
 def parse_git_status(status):
     lines = status.split('\n')
@@ -50,6 +50,15 @@ def parse_git_current_branch(status):
         return ""
     statusResult = (status.split('\n')[0]).split()[-1]
     return " (" + statusResult + ")"
+
+def make_branch_list():
+    ret_list = subprocess.check_output(['git', 'branch', '-l']).decode('utf-8').split('\n')
+    ret_list.remove('')
+    for i in range(len(ret_list)):
+        if ret_list[i][0] == '*':
+            ret_list[i].replace('*', '')
+        ret_list[i] = ret_list[i].lstrip().split()[-1]
+    return ret_list
 
 def is_gitrepo(dir):
     if not os.path.exists(dir):

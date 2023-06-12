@@ -2,7 +2,7 @@ import os
 import subprocess
 from PyQt5.QtWidgets import QInputDialog, QMessageBox
 from _refreshAction import refreshAction
-from utility import is_gitrepo
+from utility import is_gitrepo, make_branch_list
 
 class branchAction(refreshAction):
     def BranchCreate(self):
@@ -30,12 +30,7 @@ class branchAction(refreshAction):
         path = self.mainModel.filePath(self.mainExplorer.currentIndex())
         path = path.rsplit('/', 1)[0]
         if is_gitrepo(path):
-            branch_list = subprocess.check_output(['git', 'branch', '-l']).decode('utf-8').split('\n')
-            branch_list.remove('')
-            for i in range(len(branch_list)):
-                if branch_list[i][0] == '*':
-                    branch_list[i].replace('*', '')
-                branch_list[i] = branch_list[i].lstrip().split()[-1]
+            branch_list = make_branch_list()
             branch, ok = QInputDialog.getItem(self, 'Delete Branch', 'What branch do you want to delete?', branch_list)
             if ok:
                 try:
@@ -58,12 +53,7 @@ class branchAction(refreshAction):
         path = self.mainModel.filePath(self.mainExplorer.currentIndex())
         path = path.rsplit('/', 1)[0]
         if is_gitrepo(path):
-            branch_list = subprocess.check_output(['git', 'branch', '-l']).decode('utf-8').split('\n')
-            branch_list.remove('')
-            for i in range(len(branch_list)):
-                if branch_list[i][0] == '*':
-                    branch_list[i].replace('*', '')
-                branch_list[i] = branch_list[i].lstrip().split()[-1]
+            branch_list = make_branch_list()
             old_branch, ok1 = QInputDialog.getItem(self, 'Rename Branch', 'What branch do you want to rename?', branch_list)
             new_branch, ok2 = QInputDialog.getText(self, 'Rename Branch', f"{old_branch} to what name? Enter the new branch name")
             if ok1 and ok2:
@@ -86,12 +76,7 @@ class branchAction(refreshAction):
         path = self.mainModel.filePath(self.mainExplorer.currentIndex())
         path = path.rsplit('/', 1)[0]
         if is_gitrepo(path):
-            branch_list = subprocess.check_output(['git', 'branch', '-l']).decode('utf-8').split('\n')
-            branch_list.remove('')
-            for i in range(len(branch_list)):
-                if branch_list[i][0] == '*':
-                    branch_list[i].replace('*', '')
-                branch_list[i] = branch_list[i].lstrip().split()[-1]
+            branch_list = make_branch_list()
             branch, ok = QInputDialog.getItem(self, 'Checkout Branch', 'What branch do you want to checkout?', branch_list)
             if ok:
                 try:
@@ -115,12 +100,7 @@ class branchAction(refreshAction):
         path = self.mainModel.filePath(self.mainExplorer.currentIndex())
         path = path.rsplit('/', 1)[0]
         if is_gitrepo(path):
-            branch_list = subprocess.check_output(['git', 'branch', '-l']).decode('utf-8').split('\n')
-            branch_list.remove('')
-            for i in range(len(branch_list)):
-                if branch_list[i][0] == '*':
-                    branch_list[i].replace('*', '')
-                branch_list[i] = branch_list[i].lstrip().split()[-1]
+            branch_list = make_branch_list()
         else:
             print("git init을 먼저 하세요.")
             QMessageBox.warning(self, "Warning", "git init을 먼저 하세요.", QMessageBox.Ok)
