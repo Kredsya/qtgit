@@ -101,6 +101,15 @@ class branchAction(refreshAction):
         path = path.rsplit('/', 1)[0]
         if is_gitrepo(path):
             branch_list = make_branch_list()
+            print(branch_list)
+            branch_list.remove(self.currentBranch)
+            branch, ok = QInputDialog.getItem(self, 'Merge Branch', f'Select target branch\nbase:{self.currentBranch} <- compare:target_branch', branch_list)
+            if ok:
+                try:
+                    statusResult = subprocess.check_output(['git', 'merge', branch], shell=True, stderr=subprocess.STDOUT).decode('utf-8').split('\n')[0]
+                except Exception as e:
+                    statusResult = e.output.decode()
+                print(f'===statusResult = {statusResult}===')
         else:
             print("git init을 먼저 하세요.")
             QMessageBox.warning(self, "Warning", "git init을 먼저 하세요.", QMessageBox.Ok)

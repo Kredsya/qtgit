@@ -49,7 +49,7 @@ def parse_git_current_branch(status):
     if status == "":
         return ""
     statusResult = (status.split('\n')[0]).split()[-1]
-    return " (" + statusResult + ")"
+    return statusResult
 
 def make_branch_list():
     ret_list = subprocess.check_output(['git', 'branch', '-l']).decode('utf-8').split('\n')
