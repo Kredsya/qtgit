@@ -9,6 +9,9 @@ A simple GUI based git repository management file explorer written in Python usi
 * File explorer
 * Initialization of a Git repository
 * Version control of a Git repository
+* Branch management of a Git repository
+* Commit history of a Git repository
+* Cloning the Git repository
 
 ## Requirements
 
