@@ -1,3 +1,4 @@
+import os
 import sys
 from PyQt5.QtWidgets import (
     QWidget,
@@ -44,8 +45,11 @@ class GitCredential(QWidget):
         self.button.clicked.connect(self.save_git_credential)
 
     def save_git_credential(self):
+        dir_path = "C:/QtGit"
         file_path = "C:/QtGit/git_credential.txt"
         try:
+            if not os.path.exists(dir_path):
+                os.mkdir(dir_path)
             with open(file_path, "w") as file:
                 file.write(self.textEdit_github_username.toPlainText() + "\n")
                 file.write(self.textEdit_personal_access_token.toPlainText() + "\n")
