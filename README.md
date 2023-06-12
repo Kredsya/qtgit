@@ -10,6 +10,14 @@ A simple GUI based git repository management file explorer written in Python usi
 * Initialization of a Git repository
 * Version control of a Git repository
 
+## Requirements
+
+* Microsoft Windows 10
+* Python 3.11.4 or above
+* PyQt5 5.15.9 or above
+* ansi2html 1.8.0 or above
+* beautifulsoup4 4.12.2 or above
+
 ## Installation
 
 Clone this repository and install required dependencies.
@@ -20,6 +28,7 @@ pip3 install pyqt5
 ```
 
 or you can also try this command
+
 ```shell
 pip install pyqt5
 ```
