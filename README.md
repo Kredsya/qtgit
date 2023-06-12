@@ -27,13 +27,17 @@ Clone this repository and install required dependencies.
 
 ```shell
 git clone https://github.com/Kredsya/qtgit.git
-pip3 install pyqt5
+pip3 install PyQt5
+pip3 install ansi2html
+pip3 install beautifulsoup4
 ```
 
 or you can also try this command
 
 ```shell
-pip install pyqt5
+pip install PyQt5
+pip install ansi2html
+pip install beautifulsoup4
 ```
 
 ## Execution
