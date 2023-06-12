@@ -103,7 +103,7 @@ class branchAction(refreshAction):
             branch_list = make_branch_list()
             print(branch_list)
             branch_list.remove(self.currentBranch)
-            branch, ok = QInputDialog.getItem(self, 'Merge Branch', f'Select target branch\nbase:{self.currentBranch} <- compare:target_branch', branch_list)
+            branch, ok = QInputDialog.getItem(self, 'Merge Branch', f'Select target branch\nbase:{self.currentBranch} <- compare:[target_branch]', branch_list)
             if ok:
                 errorFlag = False
                 try:
@@ -112,11 +112,15 @@ class branchAction(refreshAction):
                     statusResult = e.output.decode()
                     errorFlag = True
                 if "CONFLICT" in statusResult:
-                    statusResult = os.popen("git status").read()
+                    try:
+                        statusResult = subprocess.check_output(['git', 'status'], shell=True, stderr=subprocess.STDOUT).decode('utf-8')
+                    except Exception as e:
+                        statusResult = e.output.decode()
                     unmergedPaths = parse_unmerged_paths(statusResult)
                     unmergedPathsStr = ""
                     for path in unmergedPaths:
                         unmergedPathsStr += path + '\n'
+                    print(f'===unmergedPath = {unmergedPaths}===')
                     QMessageBox.warning(self, "Warning", unmergedPathsStr + "\nMerge conflict.", QMessageBox.Ok)
                     subprocess.run(['git', 'merge', '--abort'], shell=True)
                 elif errorFlag:

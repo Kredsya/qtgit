@@ -57,7 +57,7 @@ def parse_unmerged_paths(status):
     flag = False
     for line in statusResult:
         line = line.strip()
-        if line.startswith("(use"):
+        if line.startswith("(use \"git add"):
             flag = True
             continue
         elif flag and line == '':
