@@ -2,7 +2,7 @@ from os.path import isfile, isdir
 import subprocess, os, platform
 from PyQt5.QtWidgets import QMenu
 from PyQt5.QtGui import QCursor
-from utility import parse_git_status, is_gitrepo, parse_git_branch
+from utility import parse_git_status, is_gitrepo, parse_git_current_branch
 from PyQt5.QtCore import Qt
 
 class eventController():
@@ -16,7 +16,7 @@ class eventController():
                 statuses_str = os.popen("git status").read()
                 git_statuses = parse_git_status(statuses_str)
                 self.git_status_column_update(itemPath_str, git_statuses)
-                self.currentBranch = parse_git_branch(statuses_str)
+                self.currentBranch = parse_git_current_branch(statuses_str)
             self.navigate(event) #navigate함수 호출 #폴더를 열어줌
 
         elif isfile(itemPath): #더블클릭한 파일이 파일일 경우
