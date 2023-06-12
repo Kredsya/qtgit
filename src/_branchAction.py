@@ -112,4 +112,15 @@ class branchAction(refreshAction):
             QMessageBox.warning(self, "Warning", "git init을 먼저 하세요.", QMessageBox.Ok)
     
     def BranchMerge(self):
-        print()
+        path = self.mainModel.filePath(self.mainExplorer.currentIndex())
+        path = path.rsplit('/', 1)[0]
+        if is_gitrepo(path):
+            branch_list = subprocess.check_output(['git', 'branch', '-l']).decode('utf-8').split('\n')
+            branch_list.remove('')
+            for i in range(len(branch_list)):
+                if branch_list[i][0] == '*':
+                    branch_list[i].replace('*', '')
+                branch_list[i] = branch_list[i].lstrip().split()[-1]
+        else:
+            print("git init을 먼저 하세요.")
+            QMessageBox.warning(self, "Warning", "git init을 먼저 하세요.", QMessageBox.Ok)
