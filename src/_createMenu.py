@@ -96,7 +96,7 @@ class createMenu(fileAction):
         gitCommitAction.triggered.connect(self.GitCommit)
 
         gitGraphAction = QAction('&Log Graph', self)
-        gitGraphAction.setStatusTip('Confirm about staged files and Execute <git commit -m [message]> command')
+        gitGraphAction.setStatusTip('Execute <git log --all --decorate --color --oneline --graph --date-order> command')
         gitGraphAction.triggered.connect(self.GitLogGraph)
 
         gitCredentialAction = QAction('&Credential', self)
