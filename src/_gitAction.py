@@ -11,7 +11,7 @@ import sys
 class gitAction(refreshAction):
     def GitInit(self):  # 상단바의 Git의 Init을 클릭 시 - git init을 실행하는 메소드(현재 디렉토리에 .git이 없는 디렉토리에서만 git init 실행) - .git이 있을 경우 경고 창
         # 현재 디렉토리 확인
-        path = self.mainModel.filePath(self.mainExplorer.currentIndex())  # QFileSystemModel의 현재 디렉토리의 경로를 반환하는 함수
+        path = self.mainModel.rootPath()
         print(path)
         # 현재 디렉토리에 .git이 있는지 확인
         if os.path.isdir(path + "/.git"):  # os.path.isdir() : 디렉토리가 존재하는지 확인하는 함수
@@ -29,8 +29,7 @@ class gitAction(refreshAction):
             self.refresh()
 
     def GitAdd(self):
-        path = self.mainModel.filePath(self.mainExplorer.currentIndex())  # QFileSystemModel의 현재 디렉토리의 경로를 반환하는 함수
-        path = path.rsplit('/', 1)[0]
+        path = self.mainModel.rootPath()
         print(path)
         if is_gitrepo(path):
             selectedIndexes = self.mainExplorer.selectionModel().selectedIndexes()
@@ -52,8 +51,7 @@ class gitAction(refreshAction):
             QMessageBox.warning(self, "Warning", "git init을 먼저 하세요.", QMessageBox.Ok)
 
     def GitRestore(self):
-        path = self.mainModel.filePath(self.mainExplorer.currentIndex())  # QFileSystemModel의 현재 디렉토리의 경로를 반환하는 함수
-        path = path.rsplit('/', 1)[0]
+        path = self.mainModel.rootPath()
         if is_gitrepo(path):
             selectedIndexes = self.mainExplorer.selectionModel().selectedIndexes()
             restoreResult = ""
@@ -77,8 +75,7 @@ class gitAction(refreshAction):
             QMessageBox.warning(self, "Warning", "git init을 먼저 하세요.", QMessageBox.Ok)
 
     def GitRmDelete(self):
-        path = self.mainModel.filePath(self.mainExplorer.currentIndex())  # QFileSystemModel의 현재 디렉토리의 경로를 반환하는 함수
-        path = path.rsplit('/', 1)[0]
+        path = self.mainModel.rootPath()
         if is_gitrepo(path):
             selectedIndexes = self.mainExplorer.selectionModel().selectedIndexes()
             rmDeleteResult = ""
@@ -102,8 +99,7 @@ class gitAction(refreshAction):
             QMessageBox.warning(self, "Warning", "git init을 먼저 하세요.", QMessageBox.Ok)
 
     def GitRmUntrack(self):
-        path = self.mainModel.filePath(self.mainExplorer.currentIndex())  # QFileSystemModel의 현재 디렉토리의 경로를 반환하는 함수
-        path = path.rsplit('/', 1)[0]
+        path = self.mainModel.rootPath()
         if is_gitrepo(path):
             selectedIndexes = self.mainExplorer.selectionModel().selectedIndexes()
             rmUntrackResult = ""
@@ -127,8 +123,7 @@ class gitAction(refreshAction):
             QMessageBox.warning(self, "Warning", "git init을 먼저 하세요.", QMessageBox.Ok)
 
     def GitCommit(self):
-        path = self.mainModel.filePath(self.mainExplorer.currentIndex())  # QFileSystemModel의 현재 디렉토리의 경로를 반환하는 함수
-        path = path.rsplit('/', 1)[0]
+        path = self.mainModel.rootPath()
         if is_gitrepo(path):
             try:
                 statusResult = subprocess.check_output(['git', 'status'], shell=True, stderr=subprocess.STDOUT).decode('utf-8')
@@ -150,8 +145,7 @@ class gitAction(refreshAction):
             QMessageBox.warning(self, "Warning", "git init을 먼저 하세요.", QMessageBox.Ok)
 
     def GitLogGraph(self):
-        path = self.mainModel.filePath(self.mainExplorer.currentIndex())
-        path = path.rsplit('/', 1)[0]
+        path = self.mainModel.rootPath()
         if is_gitrepo(path):
             #_gitGraph.py 사용
             self.gitLogViewer = GitLogViewer()  # self에 참조를 저장하여 객체가 사라지지 않게 합니다.

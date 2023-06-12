@@ -15,7 +15,9 @@ class navigator():
         self.currentDir = os.path.dirname(self.currentDir) #현재 디렉토리의 상위 디렉토리를 설정
         self.navigate(self.mainModel.setRootPath(self.currentDir)) #QListView의 디렉토리를 설정
         path = self.mainModel.setRootPath(self.currentDir)
-        if is_gitrepo(self.currentDir):
+        path_str = self.mainModel.filePath(path)
+        print(f'###path = {path_str}')
+        if is_gitrepo(path_str):
             os.chdir(self.currentDir)
             try:
                 statuses_str = subprocess.check_output(['git', 'status'], shell=True, stderr=subprocess.STDOUT).decode('utf-8')
@@ -24,4 +26,6 @@ class navigator():
             git_statuses = parse_git_status(statuses_str)
             self.git_status_column_update(self.currentDir, git_statuses)
             self.currentBranch = parse_git_current_branch(statuses_str)
+        else:
+            self.currentBranch = ""
         self.navigate(path)

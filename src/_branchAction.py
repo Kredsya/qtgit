@@ -6,8 +6,8 @@ from utility import is_gitrepo, make_branch_list, parse_unmerged_paths
 
 class branchAction(refreshAction):
     def BranchCreate(self):
-        path = self.mainModel.filePath(self.mainExplorer.currentIndex())
-        path = path.rsplit('/', 1)[0]
+        path = self.mainModel.rootPath()
+        print(f'===path = {path}')
         if is_gitrepo(path):
             branch, ok = QInputDialog.getText(self, 'Create Branch', 'Enter the branch name to create')
             if ok:
@@ -27,8 +27,7 @@ class branchAction(refreshAction):
             QMessageBox.warning(self, "Warning", "git init을 먼저 하세요.", QMessageBox.Ok)
 
     def BranchDelete(self):
-        path = self.mainModel.filePath(self.mainExplorer.currentIndex())
-        path = path.rsplit('/', 1)[0]
+        path = self.mainModel.rootPath()
         if is_gitrepo(path):
             branch_list = make_branch_list()
             branch, ok = QInputDialog.getItem(self, 'Delete Branch', 'What branch do you want to delete?', branch_list)
@@ -50,8 +49,7 @@ class branchAction(refreshAction):
             QMessageBox.warning(self, "Warning", "git init을 먼저 하세요.", QMessageBox.Ok)
     
     def BranchRename(self):
-        path = self.mainModel.filePath(self.mainExplorer.currentIndex())
-        path = path.rsplit('/', 1)[0]
+        path = self.mainModel.rootPath()
         if is_gitrepo(path):
             branch_list = make_branch_list()
             old_branch, ok1 = QInputDialog.getItem(self, 'Rename Branch', 'What branch do you want to rename?', branch_list)
@@ -73,8 +71,7 @@ class branchAction(refreshAction):
             QMessageBox.warning(self, "Warning", "git init을 먼저 하세요.", QMessageBox.Ok)
     
     def BranchCheckout(self):
-        path = self.mainModel.filePath(self.mainExplorer.currentIndex())
-        path = path.rsplit('/', 1)[0]
+        path = self.mainModel.rootPath()
         if is_gitrepo(path):
             branch_list = make_branch_list()
             branch, ok = QInputDialog.getItem(self, 'Checkout Branch', 'What branch do you want to checkout?', branch_list)
@@ -97,8 +94,7 @@ class branchAction(refreshAction):
             QMessageBox.warning(self, "Warning", "git init을 먼저 하세요.", QMessageBox.Ok)
     
     def BranchMerge(self):
-        path = self.mainModel.filePath(self.mainExplorer.currentIndex())
-        path = path.rsplit('/', 1)[0]
+        path = self.mainModel.rootPath()
         if is_gitrepo(path):
             branch_list = make_branch_list()
             print(branch_list)
